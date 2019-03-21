@@ -6,7 +6,7 @@
 /*   By: aben-azz <aben-azz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/12/08 08:51:22 by aben-azz          #+#    #+#             */
-/*   Updated: 2019/03/21 04:38:51 by aben-azz         ###   ########.fr       */
+/*   Updated: 2019/03/21 05:36:54 by aben-azz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ int		main(int ac, char **av)
 	int exec;
 	pid_t	pid;
 	char *string;
-	int a = 1;
+	char **cmd;
 
 	while (19)
 	{
@@ -33,24 +33,20 @@ int		main(int ac, char **av)
 		if (!pid)
 		{
 			ft_dprintf(1, PREFIX);
-
 			if (!~(ret = read(0, buf, sizeof(buf))))
 				exit(0);
-
 			if (!ft_strcmp(buf, "exit\n"))
 			{
-				a = 0;
-				ft_printf("ok: |%s|, %d\n",  buf, ft_strcmp(buf, "exit\n"));
+				ft_printf("ok: |%s|, %d\n", buf, ft_strcmp(buf, "exit\n"));
 				exit(0);
 			}
 			else
 			{
-				ft_printf("pas ok: |%s|, %d\n",  buf, ft_strcmp(buf, "exit\n"));
+				ft_printf("pas ok: |%s|, %d\n", buf, ft_strcmp(buf, "exit\n"));
 				exec = 0;
-				char **cmd = ft_strsplit(buf, ' ');
-
+				cmd = ft_strsplit(buf, ' ');
 				string = ft_strjoin("/bin/", cmd[0]);
-				cmd[1][ft_strlen(cmd[0]) - 1 ] = '\0';
+				cmd[1][ft_strlen(cmd[0]) - 1] = '\0';
 				ft_printf("cmd la vaut: |%s|\n", cmd[0]);
 				++cmd;
 				ft_printf("cmd la vaut: |%r|\n", cmd, 2, "-");
@@ -61,13 +57,13 @@ int		main(int ac, char **av)
 				else
 					ft_dprintf(1, "success\n");
 			}
-		} else if (pid < 0)
+		}
+		else if (pid < 0)
 		{
 			ft_printf("Fork failed to create a new process.");
 			exit(0);
 		}
-		if (a)
-			wait(&pid);
+		wait(&pid);
 	}
 	return (0);
 }
