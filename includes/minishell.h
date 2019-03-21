@@ -6,7 +6,7 @@
 /*   By: aben-azz <aben-azz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/02/03 09:25:27 by aben-azz          #+#    #+#             */
-/*   Updated: 2019/03/21 03:43:10 by aben-azz         ###   ########.fr       */
+/*   Updated: 2019/03/21 03:49:39 by aben-azz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 # define MINISHELL_H
 # include "libft/includes/libft.h"
 # include <stdio.h>
+# include <unistd.h>
 # include <stdlib.h>
 # include <math.h>
 # include <fcntl.h>
