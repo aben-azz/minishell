@@ -6,7 +6,7 @@
 /*   By: aben-azz <aben-azz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/02/03 09:25:27 by aben-azz          #+#    #+#             */
-/*   Updated: 2019/03/25 01:08:26 by aben-azz         ###   ########.fr       */
+/*   Updated: 2019/03/25 05:02:02 by aben-azz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@
 typedef struct	s_data
 {
 	int				xd;
-	char 			**argv;
+	char			**argv;
 }				t_data;
 int				get(int n, int iter_max);
 typedef struct	s_built
