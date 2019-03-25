@@ -28,6 +28,23 @@ int		ft_exit(t_data *data)
 	return (0);
 }
 
+void signal_handler_command(int sig)
+{
+	if (sig != SIGINT)
+		return;
+	ft_printf("\n");
+	signal(SIGINT, signal_handler_command);
+}
+
+void signal_handler_empty(int sig)
+{
+	if (sig != SIGINT)
+		return;
+	ft_printf("\n$%s \x1b[36m\x1b[0m\x1b[31m\x1b[1m%s\x1b[0m\x1b[36m\x1b[0m>",
+	get_env("PWD"), get_env("USER"));
+	signal(SIGINT, signal_handler_empty);
+}
+
 int		exec_valid_command(t_data *d, int m)
 {
 	pid_t pid;
@@ -37,8 +54,10 @@ int		exec_valid_command(t_data *d, int m)
 
 	path = ft_strsplit(get_env("PATH"), ':');
 	av = malloc(sizeof(char*) * 2048);
+	signal(SIGINT, signal_handler_empty);
 	if (!(pid = fork()))
 	{
+		//
 		(!m && *d->argv[0] == '\\' && *(d->argv[0] + 1) == '/') && ++d->argv[0];
 		if (!m && ~execve(d->argv[0], d->argv, NULL))
 			return (1);
@@ -106,7 +125,7 @@ int		main(int ac, char **av, char **env)
 	{
 		ft_printf("$%s \x1b[36m\x1b[0m\x1b[31m\x1b[1m%s\x1b[0m\x1b[36m\x1b[0m>",
 			get_env("PWD"), get_env("USER"));
-		//signal(SIGINT, sighandler);
+		signal(SIGINT, signal_handler_empty);
 		((ret = get_next_line(0, &input, '\n')) > 0) && handler(input);
 		if (ret == -1)
 			break ;
