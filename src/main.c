@@ -6,7 +6,7 @@
 /*   By: aben-azz <aben-azz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/12/08 08:51:22 by aben-azz          #+#    #+#             */
-/*   Updated: 2019/03/25 01:15:10 by aben-azz         ###   ########.fr       */
+/*   Updated: 2019/03/25 01:27:37 by aben-azz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,93 +63,62 @@ int		ft_exit(t_data *data)
 	return (0);
 }
 
-char *get_env(char *env)
+char	*get_env(char *env)
 {
 	return (ft_strsub(env, ft_indexof(env, '=') + 1, ft_strlen(env)));
 }
 
-void handler(char *string, char **env)
+int		exec_command(t_data *data)
 {
-	(void)env;
-	char **commands;
-	t_data *datas;
+	ft_printf("non builtin cmd: %s\n", data->argv[0]);
+	return (0);
+}
+
+int		find_built(t_data *data)
+{
 	int i;
 
 	i = -1;
-	datas = malloc(sizeof(t_data));
+	while (++i < 6)
+		if (!ft_strcmp(g_built[i].builtin, data->argv[0]))
+		{
+			g_built[i].function && g_built[i].function(data);
+			return (1);
+		}
+	return (0);
+}
 
+int		handler(char *string, char **env)
+{
+	char	**commands;
+	t_data	*data;
+
+	(void)env;
+	data = malloc(sizeof(t_data));
 	commands = ft_strsplit(string, ';');
 	while (*commands)
 	{
-		datas->argv = ft_strsplit(*commands, ' ');
-		while (++i < 6)
-			if (!ft_strcmp(g_built[i].builtin, datas->argv[0]))
-			{
-				g_built[i].function(datas);
-				break ;
-			}
-		(void)*commands++;
+		data->argv = ft_strsplit(*commands++, ' ');
+		find_built(data) || exec_command(data);
 	}
+	return (1);
 }
+
 int		main(int ac, char **av, char **env)
 {
+	char	*input;
+	int		ret;
+
 	(void)ac;
 	(void)av;
-	(void)g_built;
-
-	char *input;
-	int ret;
-
 	ret = 1;
 	while (ret == 1)
 	{
 		ft_printf("$%s %s>", get_env(env[12]), get_env(env[9]));
 		//signal(SIGINT, sighandler);
-		if ((ret = get_next_line(0, &input, '\n')) > 0)
-			handler(input, env);
+		((ret = get_next_line(0, &input, '\n')) > 0) && handler(input, env);
 		if (ret == -1)
 			break ;
 	}
-	// char buf[2048];
-	// int ret;
-	// int exec;
-	// pid_t	pid;
-	// ft_printf("env: {%r}\n", env, 30, "\n");
-	// //char **commands;
-	// pid = 0;
-	// while (19)
-	// {
-	// 	//pid = fork();
-	// 	ft_printf("$%s %s>", get_env(env[12]), get_env(env[9]));
-	// 	if (!~(ret = read(0, buf, sizeof(buf))))
-	// 		exit(0);
-	// 	if (!pid)
-	// 	{
-	//
-	//
-	//
-	// 		if (!ft_strcmp(buf, "exit\n"))
-	// 		{
-	// 			ft_printf("exit done ! code: %d\n", pid);
-	// 			exit (0);
-	// 			if (pid > 0)
-	// 				exit(0);
-	// 		}
-	// 		else
-	// 		{
-	// 			exec = 0;
-	// 			char *argv[] = { "/bin/ls", "-l", NULL};
-	// 			pid = fork();
-	// 			exec = execve(argv[0], argv, NULL);
-	// 		}
-	// 	}
-	// 	else if (pid < 0)
-	// 	{
-	// 		ft_printf("Fork failed to create a new process.\n");
-	// 		exit(0);
-	// 	}
-	//
-	// 	wait(&pid);
-	// }
 	return (0);
 }
