@@ -6,7 +6,7 @@
 /*   By: aben-azz <aben-azz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/12/08 08:51:22 by aben-azz          #+#    #+#             */
-/*   Updated: 2019/03/25 06:12:36 by aben-azz         ###   ########.fr       */
+/*   Updated: 2019/03/25 06:34:53 by aben-azz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,73 +76,33 @@ char	*get_env(char **env, char *name)
 			return (NULL);
 }
 
-
-
-int		exec_valid_command(t_data *d)
+int		exec_valid_command(t_data *d, char **env, int m)
 {
 	pid_t pid;
-
-	pid = fork();
-	if (!pid)
-	{
-		(*d->argv[0] == '\\' && *(d->argv[0] + 1) == '/') && ++d->argv[0];
-		if (!~execve(d->argv[0], d->argv, NULL))
-			ft_printf("minishell: no such file or directory: %s\n", d->argv[0]);
-	}
-	else if (pid < 0)
-	{
-		ft_printf("Fork failed to create a new process.\n");
-		exit(0);
-	}
-	wait(&pid);
-	return (0);
-}
-
-int		exec_non_valid_command(t_data *data, char **env)
-{
-	pid_t pid;
-	char **argv;
+	char **av;
 	char **path;
 	int i;
 
 	path = ft_strsplit(get_env(env, "PATH"), ':');
-	argv = malloc(sizeof(char*) * 2048);
-	pid = fork();
-	if (!pid)
+	av = malloc(sizeof(char*) * 2048);
+	if (!(pid = fork()))
 	{
-		while (*path)
+		(!m && *d->argv[0] == '\\' && *(d->argv[0] + 1) == '/') && ++d->argv[0];
+		if (!m && ~execve(d->argv[0], d->argv, NULL))
+			return (1);
+		while (*path && (i = -1))
 		{
-			i = -1;
-			while (data->argv[++i])
-			{
-				if (!i)
-					argv[0] = ft_strjoin(ft_strjoin(*path++, "/"),
-						data->argv[0]);
-				else
-					argv[i] = data->argv[i];
-			}
-			if (~execve(argv[0], argv, NULL))
+			while (d->argv[++i])
+				av[i] = i ? d->argv[i] : ft_strjoin(ft_strjoin(*path++, "/"),
+					d->argv[0]);
+			if (~execve(av[0], av, NULL))
 				return (1);
 		}
-		ft_printf("minishell: no such file or directory: %s\n", data->argv[0]);
+		ft_printf("minishell: no such file or directory: %s\n", d->argv[0]);
 	}
 	else if (pid < 0)
-	{
-		ft_printf("Fork failed to create a new process.\n");
-		exit(0);
-	}
+		return (ft_printf("Fork failed to create a new process.\n") ? -1 : -1);
 	wait(&pid);
-	return (0);
-}
-
-int		which_command(t_data *d, char **env)
-{
-	while (ft_is_space(*d->argv[0]))
-		(void)*d->argv[0]++;
-	if (*d->argv[0] == '/' || (*d->argv[0] == '\\' && *(d->argv[0] + 1) == '/'))
-		exec_valid_command(d);
-	else
-		exec_non_valid_command(d, env);
 	return (0);
 }
 
@@ -171,7 +131,13 @@ int		handler(char *string, char **env)
 	while (*commands)
 	{
 		data->argv = ft_strsplit(*commands++, ' ');
-		find_built(data) || which_command(data, env);
+		if (!find_built(data))
+		{
+			while (ft_is_space(*data->argv[0]))
+				(void)*data->argv[0]++;
+			exec_valid_command(data, env, !(*data->argv[0] == '/' ||
+				(*data->argv[0] == '\\' && *(data->argv[0] + 1) == '/')));
+		}
 	}
 	return (1);
 }
@@ -186,8 +152,8 @@ int		main(int ac, char **av, char **env)
 	ret = 1;
 	while (ret == 1)
 	{
-		ft_printf("$%s \x1b[36m\x1b[0m\x1b[31m\x1b[1m%s\x1b[0m\x1b[36m\x1b[0m>", get_env(env, "PWD"), get_env(env, "USER"));
-		//ft_printf("$%s %s>", get_env(env[12]), get_env(env[9]));
+		ft_printf("$%s \x1b[36m\x1b[0m\x1b[31m\x1b[1m%s\x1b[0m\x1b[36m\x1b[0m>",
+			get_env(env, "PWD"), get_env(env, "USER"));
 		//signal(SIGINT, sighandler);
 		((ret = get_next_line(0, &input, '\n')) > 0) && handler(input, env);
 		if (ret == -1)
