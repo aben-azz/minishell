@@ -21,6 +21,15 @@ static t_built g_built[] = {
 	{"exit", &ft_exit}
 };
 
+void display_prompt_prefix(void)
+{
+	char *string;
+
+	string = NULL;
+	string = getcwd(string, 20);
+	ft_printf("$%s %s> ", string, get_env("USER"));
+}
+
 int		ft_exit(t_data *data)
 {
 	(void)data;
@@ -40,8 +49,8 @@ void signal_handler_empty(int sig)
 {
 	if (sig != SIGINT)
 		return;
-	ft_printf("\n$%s \x1b[36m\x1b[0m\x1b[31m\x1b[1m%s\x1b[0m\x1b[36m\x1b[0m>",
-	get_env("PWD"), get_env("USER"));
+	ft_printf("\n");
+	display_prompt_prefix();
 	signal(SIGINT, signal_handler_empty);
 }
 
@@ -112,6 +121,7 @@ int		handler(char *string)
 	return (1);
 }
 
+
 int		main(int ac, char **av, char **env)
 {
 	char	*input;
@@ -123,8 +133,9 @@ int		main(int ac, char **av, char **env)
 	ret = 1;
 	while (ret == 1)
 	{
-		ft_printf("$%s \x1b[36m\x1b[0m\x1b[31m\x1b[1m%s\x1b[0m\x1b[36m\x1b[0m>",
-			get_env("PWD"), get_env("USER"));
+		display_prompt_prefix();
+		// ft_printf("$%s \x1b[36m\x1b[0m\x1b[31m\x1b[1m%s\x1b[0m\x1b[36m\x1b[0m>",
+		// 	get_env("PWD"), get_env("USER"));
 		signal(SIGINT, signal_handler_empty);
 		((ret = get_next_line(0, &input, '\n')) > 0) && handler(input);
 		if (ret == -1)
