@@ -6,64 +6,150 @@
 /*   By: aben-azz <aben-azz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/12/08 08:51:22 by aben-azz          #+#    #+#             */
-/*   Updated: 2019/03/21 05:36:54 by aben-azz         ###   ########.fr       */
+/*   Updated: 2019/03/25 01:15:10 by aben-azz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "includes/minishell.h"
-int lol(void)
+static t_built g_built[] = {
+	{"echo", &ft_echo},
+	{"cd", &ft_cd},
+	{"setenv", &ft_setenv},
+	{"unsetenv", &ft_unsetenv},
+	{"env", &ft_env},
+	{"exit", &ft_exit}
+};
+
+int		ft_echo(t_data *data)
 {
-	exit(0);
-	return (1);
+	(void)data;
+	ft_printf("commande echo\n");
+	return (0);
 }
-int		main(int ac, char **av)
+
+int		ft_cd(t_data *data)
+{
+	(void)data;
+	ft_printf("commande cd\n");
+	return (0);
+}
+
+int		ft_setenv(t_data *data)
+{
+	(void)data;
+	ft_printf("commande setenv\n");
+	return (0);
+}
+
+int		ft_unsetenv(t_data *data)
+{
+	(void)data;
+	ft_printf("commande unsetenv\n");
+	return (0);
+}
+
+int		ft_env(t_data *data)
+{
+	(void)data;
+	ft_printf("commande env\n");
+	return (0);
+}
+
+int		ft_exit(t_data *data)
+{
+	(void)data;
+	ft_printf("commande exit\n");
+	exit(0);
+	return (0);
+}
+
+char *get_env(char *env)
+{
+	return (ft_strsub(env, ft_indexof(env, '=') + 1, ft_strlen(env)));
+}
+
+void handler(char *string, char **env)
+{
+	(void)env;
+	char **commands;
+	t_data *datas;
+	int i;
+
+	i = -1;
+	datas = malloc(sizeof(t_data));
+
+	commands = ft_strsplit(string, ';');
+	while (*commands)
+	{
+		datas->argv = ft_strsplit(*commands, ' ');
+		while (++i < 6)
+			if (!ft_strcmp(g_built[i].builtin, datas->argv[0]))
+			{
+				g_built[i].function(datas);
+				break ;
+			}
+		(void)*commands++;
+	}
+}
+int		main(int ac, char **av, char **env)
 {
 	(void)ac;
 	(void)av;
-	char buf[2048];
-	int ret;
-	int exec;
-	pid_t	pid;
-	char *string;
-	char **cmd;
+	(void)g_built;
 
-	while (19)
+	char *input;
+	int ret;
+
+	ret = 1;
+	while (ret == 1)
 	{
-		pid = fork();
-		if (!pid)
-		{
-			ft_dprintf(1, PREFIX);
-			if (!~(ret = read(0, buf, sizeof(buf))))
-				exit(0);
-			if (!ft_strcmp(buf, "exit\n"))
-			{
-				ft_printf("ok: |%s|, %d\n", buf, ft_strcmp(buf, "exit\n"));
-				exit(0);
-			}
-			else
-			{
-				ft_printf("pas ok: |%s|, %d\n", buf, ft_strcmp(buf, "exit\n"));
-				exec = 0;
-				cmd = ft_strsplit(buf, ' ');
-				string = ft_strjoin("/bin/", cmd[0]);
-				cmd[1][ft_strlen(cmd[0]) - 1] = '\0';
-				ft_printf("cmd la vaut: |%s|\n", cmd[0]);
-				++cmd;
-				ft_printf("cmd la vaut: |%r|\n", cmd, 2, "-");
-				exec = execve(string, cmd, NULL);
-				free(string);
-				if (~exec)
-					ft_dprintf(1, "fail\n");
-				else
-					ft_dprintf(1, "success\n");
-			}
-		}
-		else if (pid < 0)
-		{
-			ft_printf("Fork failed to create a new process.");
-			exit(0);
-		}
-		wait(&pid);
+		ft_printf("$%s %s>", get_env(env[12]), get_env(env[9]));
+		//signal(SIGINT, sighandler);
+		if ((ret = get_next_line(0, &input, '\n')) > 0)
+			handler(input, env);
+		if (ret == -1)
+			break ;
 	}
+	// char buf[2048];
+	// int ret;
+	// int exec;
+	// pid_t	pid;
+	// ft_printf("env: {%r}\n", env, 30, "\n");
+	// //char **commands;
+	// pid = 0;
+	// while (19)
+	// {
+	// 	//pid = fork();
+	// 	ft_printf("$%s %s>", get_env(env[12]), get_env(env[9]));
+	// 	if (!~(ret = read(0, buf, sizeof(buf))))
+	// 		exit(0);
+	// 	if (!pid)
+	// 	{
+	//
+	//
+	//
+	// 		if (!ft_strcmp(buf, "exit\n"))
+	// 		{
+	// 			ft_printf("exit done ! code: %d\n", pid);
+	// 			exit (0);
+	// 			if (pid > 0)
+	// 				exit(0);
+	// 		}
+	// 		else
+	// 		{
+	// 			exec = 0;
+	// 			char *argv[] = { "/bin/ls", "-l", NULL};
+	// 			pid = fork();
+	// 			exec = execve(argv[0], argv, NULL);
+	// 		}
+	// 	}
+	// 	else if (pid < 0)
+	// 	{
+	// 		ft_printf("Fork failed to create a new process.\n");
+	// 		exit(0);
+	// 	}
+	//
+	// 	wait(&pid);
+	// }
 	return (0);
 }
