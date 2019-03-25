@@ -6,7 +6,7 @@
 /*   By: aben-azz <aben-azz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/02/03 09:25:27 by aben-azz          #+#    #+#             */
-/*   Updated: 2019/03/25 05:02:02 by aben-azz         ###   ########.fr       */
+/*   Updated: 2019/03/25 07:00:51 by aben-azz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ typedef struct	s_data
 	int				xd;
 	char			**argv;
 }				t_data;
-int				get(int n, int iter_max);
+char					**g_env;
 typedef struct	s_built
 {
 	char			*builtin;
@@ -39,4 +39,7 @@ int				ft_setenv(t_data *data);
 int				ft_unsetenv(t_data *data);
 int				ft_env(t_data *data);
 int				ft_exit(t_data *data);
+void			init_env(char **env);
+char			*get_env(char *name);
+int				env_len(char **env);
 #endif
