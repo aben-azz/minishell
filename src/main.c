@@ -6,11 +6,12 @@
 /*   By: aben-azz <aben-azz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/12/08 08:51:22 by aben-azz          #+#    #+#             */
-/*   Updated: 2019/03/25 01:27:37 by aben-azz         ###   ########.fr       */
+/*   Updated: 2019/03/25 04:59:14 by aben-azz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "includes/minishell.h"
+
 static t_built g_built[] = {
 	{"echo", &ft_echo},
 	{"cd", &ft_cd},
@@ -63,14 +64,27 @@ int		ft_exit(t_data *data)
 	return (0);
 }
 
-char	*get_env(char *env)
+char	*get_env(char **env, char *name)
 {
-	return (ft_strsub(env, ft_indexof(env, '=') + 1, ft_strlen(env)));
+	int i;
+
+	i = -1;
+	while (env[++i])
+		if (!ft_strcmp(ft_strsub(env[i], 0, ft_indexof(env[i], '=')), name))
+				return (ft_strsub(env[i], ft_indexof(env[i], '=') + 1,
+					ft_strlen(env[i])));
+	return (NULL);
 }
 
-int		exec_command(t_data *data)
+int		exec_command(t_data *d)
 {
-	ft_printf("non builtin cmd: %s\n", data->argv[0]);
+	ft_printf("non builtin cmd: %s\n", d->argv[0]);
+	while (ft_is_space(*d->argv[0]))
+		(void)*d->argv[0]++;
+	if (*d->argv[0] == '/' || (*d->argv[0] == '\\' && *(d->argv[0] + 1) == '/'))
+		ft_printf("valid cmd\n");
+	else
+		ft_printf("minishell: no such file or directory: %s\n", d->argv[0]);
 	return (0);
 }
 
@@ -114,7 +128,8 @@ int		main(int ac, char **av, char **env)
 	ret = 1;
 	while (ret == 1)
 	{
-		ft_printf("$%s %s>", get_env(env[12]), get_env(env[9]));
+		ft_printf("$%s \x1b[36m\x1b[0m\x1b[31m\x1b[1m%s\x1b[0m\x1b[36m\x1b[0m>", get_env(env, "PWD"), get_env(env, "USER"));
+		//ft_printf("$%s %s>", get_env(env[12]), get_env(env[9]));
 		//signal(SIGINT, sighandler);
 		((ret = get_next_line(0, &input, '\n')) > 0) && handler(input, env);
 		if (ret == -1)
