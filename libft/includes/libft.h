@@ -6,7 +6,7 @@
 /*   By: aben-azz <aben-azz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/10/13 11:36:13 by aben-azz          #+#    #+#             */
-/*   Updated: 2019/03/17 19:02:50 by aben-azz         ###   ########.fr       */
+/*   Updated: 2019/03/25 05:47:39 by aben-azz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -163,4 +163,6 @@ unsigned long	rgb2dec(int r, int g, int b);
 double			ft_percent(int start, int end, int curr);
 int				ft_get_color_from_percent(int color1, double percentage);
 long long		ft_rand(long long n);
+int				ft_strendswith(char *s1, char *s2);
+int		ft_strstartswith(char *s1, char *s2);
 #endif

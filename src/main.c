@@ -6,7 +6,7 @@
 /*   By: aben-azz <aben-azz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/12/08 08:51:22 by aben-azz          #+#    #+#             */
-/*   Updated: 2019/03/25 05:35:11 by aben-azz         ###   ########.fr       */
+/*   Updated: 2019/03/25 06:12:36 by aben-azz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,6 +76,8 @@ char	*get_env(char **env, char *name)
 			return (NULL);
 }
 
+
+
 int		exec_valid_command(t_data *d)
 {
 	pid_t pid;
@@ -96,16 +98,33 @@ int		exec_valid_command(t_data *d)
 	return (0);
 }
 
-int		exec_non_valid_command(t_data *data)
+int		exec_non_valid_command(t_data *data, char **env)
 {
 	pid_t pid;
+	char **argv;
+	char **path;
+	int i;
 
-	(void)data;
+	path = ft_strsplit(get_env(env, "PATH"), ':');
+	argv = malloc(sizeof(char*) * 2048);
 	pid = fork();
 	if (!pid)
 	{
-		char *argv[] = {data->argv[0], data->argv[1], NULL};
-		execve(argv[0], argv, NULL);
+		while (*path)
+		{
+			i = -1;
+			while (data->argv[++i])
+			{
+				if (!i)
+					argv[0] = ft_strjoin(ft_strjoin(*path++, "/"),
+						data->argv[0]);
+				else
+					argv[i] = data->argv[i];
+			}
+			if (~execve(argv[0], argv, NULL))
+				return (1);
+		}
+		ft_printf("minishell: no such file or directory: %s\n", data->argv[0]);
 	}
 	else if (pid < 0)
 	{
@@ -116,14 +135,14 @@ int		exec_non_valid_command(t_data *data)
 	return (0);
 }
 
-int		which_command(t_data *d)
+int		which_command(t_data *d, char **env)
 {
 	while (ft_is_space(*d->argv[0]))
 		(void)*d->argv[0]++;
 	if (*d->argv[0] == '/' || (*d->argv[0] == '\\' && *(d->argv[0] + 1) == '/'))
 		exec_valid_command(d);
 	else
-		exec_non_valid_command(d);
+		exec_non_valid_command(d, env);
 	return (0);
 }
 
@@ -152,7 +171,7 @@ int		handler(char *string, char **env)
 	while (*commands)
 	{
 		data->argv = ft_strsplit(*commands++, ' ');
-		find_built(data) || which_command(data);
+		find_built(data) || which_command(data, env);
 	}
 	return (1);
 }
