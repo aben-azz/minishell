@@ -6,7 +6,7 @@
 /*   By: aben-azz <aben-azz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/12/08 08:51:22 by aben-azz          #+#    #+#             */
-/*   Updated: 2019/03/28 04:56:18 by aben-azz         ###   ########.fr       */
+/*   Updated: 2019/03/28 05:15:15 by aben-azz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,14 +33,13 @@ void display_prompt_prefix(void)
 	string = NULL;
 	string = getcwd(string, 20);
 	ft_printf("\x1b[32m➜ \x1b[0m\x1b[37m\x1b[1m");
-	ft_printf("%s\x1b[0m \x1b[1m\x1b[35m%s\x1b[0m\x1b[32m> \x1b[0m", (string +
+	ft_printf("%s\x1b[0m \x1b[1m\x1b[31m%s\x1b[0m\x1b[32m> \x1b[0m", (string +
 		ft_lastindexof(string, '/') + 1), get_env("USER"));
 }
 
 int		ft_exit(t_data *data)
 {
 	(void)data;
-	ft_printf("exit en cours\n");
 	exit(0);
 	return (0);
 }
@@ -51,7 +50,6 @@ void signal_handler_command(int sig)
 	{
 		signal(SIGINT, signal_handler_command);
 		ft_printf("\n");
-
 	}
 }
 
@@ -79,7 +77,8 @@ int execute(char **command, int dir)
 			return (execve(command[0], command, NULL));
 	}
 	if (dir)
-		ft_printf("minishell: no such file or directory: %s\n", (command[0] + ft_lastindexof(command[0], '/') + 1));
+		ft_printf("minishell: no such file or directory: %s\n",
+			(command[0] + ft_lastindexof(command[0], '/') + 1));
 	else
 		ft_printf("minishell: no such file or directory: %s\n", command[0]);
 	return (0);
