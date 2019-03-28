@@ -6,7 +6,7 @@
 /*   By: aben-azz <aben-azz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/12/08 08:51:22 by aben-azz          #+#    #+#             */
-/*   Updated: 2019/03/25 06:58:22 by aben-azz         ###   ########.fr       */
+/*   Updated: 2019/03/28 01:49:48 by aben-azz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,10 +30,10 @@ int		ft_exit(t_data *data)
 
 int		exec_valid_command(t_data *d, int m)
 {
-	pid_t pid;
-	char **av;
-	char **path;
-	int i;
+	pid_t 	pid;
+	char	**av;
+	char	**path;
+	int		i;
 
 	path = ft_strsplit(get_env("PATH"), ':');
 	av = malloc(sizeof(char*) * 2048);
@@ -106,7 +106,7 @@ int		main(int ac, char **av, char **env)
 	{
 		ft_printf("$%s \x1b[36m\x1b[0m\x1b[31m\x1b[1m%s\x1b[0m\x1b[36m\x1b[0m>",
 			get_env("PWD"), get_env("USER"));
-		//signal(SIGINT, sighandler);
+		signal(SIGINT, sighandler);
 		((ret = get_next_line(0, &input, '\n')) > 0) && handler(input);
 		if (ret == -1)
 			break ;
