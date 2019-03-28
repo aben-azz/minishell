@@ -6,7 +6,7 @@
 /*   By: aben-azz <aben-azz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/12/08 08:51:22 by aben-azz          #+#    #+#             */
-/*   Updated: 2019/03/28 07:43:59 by aben-azz         ###   ########.fr       */
+/*   Updated: 2019/03/28 07:50:11 by aben-azz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ void	display_prompt_prefix(void)
 
 int		execute(char **cmd, int dir)
 {
-	t_sta	f;
+	t_stat	f;
 	char	*s;
 	char	*buff;
 
@@ -72,7 +72,7 @@ int		exec_valid_command(t_data *d, int m)
 				av[i] = i ? d->argv[i] : ft_strjoin(ft_strjoin(*path++, "/"),
 					d->argv[0]);
 			if (~execute(av, 1))
-				return (1);
+				;//return (1);
 		}
 	}
 	else if (pid < 0)
