@@ -6,27 +6,14 @@
 /*   By: aben-azz <aben-azz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/12/08 08:51:22 by aben-azz          #+#    #+#             */
-/*   Updated: 2019/03/28 07:07:43 by aben-azz         ###   ########.fr       */
+/*   Updated: 2019/03/28 07:43:59 by aben-azz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "includes/minishell.h"
-#include <termios.h>
 #include <unistd.h>
-#include <term.h>
-#include <curses.h>
 
-static t_built g_built[] = {
-	{"echo", &ft_echo},
-	{"cd", &ft_cd},
-	{"setenv", &ft_setenv},
-	{"unsetenv", &ft_unsetenv},
-	{"env", &ft_env},
-	{"exit", &ft_exit},
-	{"clear", &ft_clear}
-};
-
-void display_prompt_prefix(void)
+void	display_prompt_prefix(void)
 {
 	char *string;
 
@@ -37,44 +24,18 @@ void display_prompt_prefix(void)
 		ft_lastindexof(string, '/') + 1), get_env("USER"));
 }
 
-int		ft_exit(t_data *data)
+int		execute(char **cmd, int dir)
 {
-	(void)data;
-	exit(0);
-	return (0);
-}
-
-void signal_handler_command(int sig)
-{
-	if (sig == SIGINT)
-	{
-		signal(SIGINT, signal_handler_command);
-		ft_printf("\n");
-	}
-}
-
-void signal_handler_empty(int sig)
-{
-	if (sig == SIGINT)
-	{
-		signal(SIGINT, signal_handler_empty);
-		ft_printf("\n");
-		display_prompt_prefix();
-	}
-}
-
-int execute(char **cmd, int dir)
-{
-	t_stat f;
-	char *s;
-	char *buff;
+	t_sta	f;
+	char	*s;
+	char	*buff;
 
 	buff = NULL;
 	buff = getcwd(buff, 4096);
 	s = (cmd[0] + ft_lastindexof(cmd[0], '/') + 1);
 	if (!ft_strcmp(s, ".."))
-		return (change_dir(ft_strsub(buff, 0, ft_lastindexof(buff, '/')),0));
-	else if(!ft_strcmp(s, "~"))
+		return (change_dir(ft_strsub(buff, 0, ft_lastindexof(buff, '/')), 0));
+	else if (!ft_strcmp(s, "~"))
 		return (change_dir(get_env("HOME"), 0));
 	else if (lstat(cmd[0], &f) != -1)
 	{
@@ -99,7 +60,8 @@ int		exec_valid_command(t_data *d, int m)
 	path = ft_strsplit(get_env("PATH"), ':');
 	av = malloc(sizeof(char*) * 2048);
 	signal(SIGINT, signal_handler_command);
-	if (!(pid = fork()))
+	pid = fork();
+	if (pid == 0)
 	{
 		(!m && *d->argv[0] == '\\' && *(d->argv[0] + 1) == '/') && ++d->argv[0];
 		if (!m && ~execute(d->argv, 0))
@@ -116,21 +78,7 @@ int		exec_valid_command(t_data *d, int m)
 	else if (pid < 0)
 		return (ft_printf("Fork failed to create a new process.\n") ? -1 : -1);
 	wait(&pid);
-	return (0);
-}
-
-int		find_built(t_data *data)
-{
-	int i;
-
-	i = -1;
-	while (++i < 7)
-		if (!ft_strcmp(g_built[i].builtin, data->argv[0]))
-		{
-			g_built[i].function && g_built[i].function(data);
-			return (1);
-		}
-	return (0);
+	return (1);
 }
 
 int		handler(char *string)

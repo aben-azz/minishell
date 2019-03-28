@@ -6,7 +6,7 @@
 /*   By: aben-azz <aben-azz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/02/03 09:25:27 by aben-azz          #+#    #+#             */
-/*   Updated: 2019/03/28 07:05:02 by aben-azz         ###   ########.fr       */
+/*   Updated: 2019/03/28 07:41:41 by aben-azz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@
 # include <math.h>
 # include <fcntl.h>
 # include <pthread.h>
+# include <signal.h>
 # include <sys/stat.h>
 # define PREFIX "\x1b[36m$\x1b[0m\x1b[31m\x1b[1m"
 # define SUFFIX "\x1b[0m\x1b[36m>\x1b[0m"
@@ -50,4 +51,8 @@ char			**realloc_env(int new_size, int exception);
 int				set_env(char *key, char *value);
 int				get_env_index(char *name);
 int				change_dir(char *path, int print_path);
+int				find_built(t_data *data);
+void			signal_handler_command(int sig);
+void			signal_handler_empty(int sig);
+void			display_prompt_prefix(void);
 #endif

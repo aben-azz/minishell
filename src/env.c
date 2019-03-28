@@ -6,7 +6,7 @@
 /*   By: aben-azz <aben-azz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/25 06:57:16 by aben-azz          #+#    #+#             */
-/*   Updated: 2019/03/28 04:45:06 by aben-azz         ###   ########.fr       */
+/*   Updated: 2019/03/28 07:36:51 by aben-azz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ int		env_len(char **env)
 	return (count);
 }
 
-void			init_env(char **env)
+void	init_env(char **env)
 {
 	int		i;
 
@@ -41,10 +41,10 @@ char	*get_env(char *name)
 	int i;
 
 	if (~(i = get_env_index(name)))
-	return (ft_strsub(g_env[i], ft_indexof(g_env[i], '=') + 1,
-		ft_strlen(g_env[i])));
+		return (ft_strsub(g_env[i], ft_indexof(g_env[i], '=') + 1,
+			ft_strlen(g_env[i])));
 	else
-		return NULL;
+		return (NULL);
 }
 
 int		get_env_index(char *name)
@@ -56,4 +56,14 @@ int		get_env_index(char *name)
 		if (!ft_strcmp(ft_strsub(g_env[i], 0, ft_indexof(g_env[i], '=')), name))
 			return (i);
 	return (-1);
+}
+
+void	signal_handler_empty(int sig)
+{
+	if (sig == SIGINT)
+	{
+		signal(SIGINT, signal_handler_empty);
+		ft_printf("\n");
+		display_prompt_prefix();
+	}
 }
