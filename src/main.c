@@ -6,7 +6,7 @@
 /*   By: aben-azz <aben-azz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/12/08 08:51:22 by aben-azz          #+#    #+#             */
-/*   Updated: 2019/03/28 06:44:54 by aben-azz         ###   ########.fr       */
+/*   Updated: 2019/03/28 07:07:43 by aben-azz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,24 +63,29 @@ void signal_handler_empty(int sig)
 	}
 }
 
-int execute(char **command, int dir)
+int execute(char **cmd, int dir)
 {
 	t_stat f;
-	if (lstat(command[0], &f) != -1)
+	char *s;
+	char *buff;
+
+	buff = NULL;
+	buff = getcwd(buff, 4096);
+	s = (cmd[0] + ft_lastindexof(cmd[0], '/') + 1);
+	if (!ft_strcmp(s, ".."))
+		return (change_dir(ft_strsub(buff, 0, ft_lastindexof(buff, '/')),0));
+	else if(!ft_strcmp(s, "~"))
+		return (change_dir(get_env("HOME"), 0));
+	else if (lstat(cmd[0], &f) != -1)
 	{
 		if (f.st_mode & S_IFDIR)
-		{
-			change_dir(command[0], 0);
-			return (0);
-		}
+			return (change_dir(cmd[0], 0));
 		if (f.st_mode & S_IXUSR)
-			return (execve(command[0], command, NULL));
+			return (execve(cmd[0], cmd, NULL));
 	}
-	if (dir)
-		ft_printf("minishell: no such file or directory: %s\n",
-			(command[0] + ft_lastindexof(command[0], '/') + 1));
-	else
-		ft_printf("minishell: no such file or directory: %s\n", command[0]);
+	else if (lstat(s, &f) != -1 && (f.st_mode & S_IFDIR))
+		return (change_dir(s, 0));
+	ft_printf("minishell: no such file or directory: %s\n", dir ? s : cmd[0]);
 	return (0);
 }
 
