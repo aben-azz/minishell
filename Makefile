@@ -6,7 +6,7 @@
 #    By: aben-azz <aben-azz@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2019/02/03 09:24:41 by aben-azz          #+#    #+#              #
-#    Updated: 2019/03/28 05:48:39 by aben-azz         ###   ########.fr        #
+#    Updated: 2019/03/28 06:09:38 by aben-azz         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -44,7 +44,7 @@ LFT_PATH = ./libft/
 INC_PATH = ./
 SRC_PATH = ./src/
 
-SRC_NAME = main.c env.c builtins_handler.c env_builtin.c
+SRC_NAME = main.c env.c builtins_handler.c env_builtin.c cd_builtin.c
 OBJ_NAME = $(SRC_NAME:.c=.o)
 
 SRC = $(addprefix $(SRC_PATH),$(SRC_NAME))

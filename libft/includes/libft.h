@@ -6,7 +6,7 @@
 /*   By: aben-azz <aben-azz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/10/13 11:36:13 by aben-azz          #+#    #+#             */
-/*   Updated: 2019/03/28 04:16:59 by aben-azz         ###   ########.fr       */
+/*   Updated: 2019/03/28 06:42:47 by aben-azz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,8 +81,7 @@ size_t			ft_strlcat(char *dst, char *src, size_t size);
 char			*ft_strchr(char *s, int c);
 char			*ft_strrchr(char *s, int c);
 char			*ft_strstr(char *haystack, char *needle);
-char			*ft_strnstr(char *haystack, char *needle,
-		size_t len);
+char			*ft_strnstr(char *haystack, char *needle, size_t len);
 int				ft_intlen(long long len);
 int				ft_intlen_base(uintmax_t nbr, int base);
 int				ft_strcmp(char *s1, char *s2);
@@ -165,5 +164,6 @@ double			ft_percent(int start, int end, int curr);
 int				ft_get_color_from_percent(int color1, double percentage);
 long long		ft_rand(long long n);
 int				ft_strendswith(char *s1, char *s2);
-int		ft_strstartswith(char *s1, char *s2);
+int				ft_strstartswith(char *s1, char *s2);
+char			*ft_strreplace(char *orig, char *rep, char *with);
 #endif

@@ -6,7 +6,7 @@
 /*   By: aben-azz <aben-azz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/12/08 08:51:22 by aben-azz          #+#    #+#             */
-/*   Updated: 2019/03/28 05:15:15 by aben-azz         ###   ########.fr       */
+/*   Updated: 2019/03/28 06:44:54 by aben-azz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,11 +68,11 @@ int execute(char **command, int dir)
 	t_stat f;
 	if (lstat(command[0], &f) != -1)
 	{
-		// if (f.st_mode & S_IFDIR)
-		// {
-		// 	change_dir(command[0], 0);
-		// 	return (0);
-		// }
+		if (f.st_mode & S_IFDIR)
+		{
+			change_dir(command[0], 0);
+			return (0);
+		}
 		if (f.st_mode & S_IXUSR)
 			return (execve(command[0], command, NULL));
 	}
@@ -107,7 +107,6 @@ int		exec_valid_command(t_data *d, int m)
 			if (~execute(av, 1))
 				return (1);
 		}
-		//ft_printf("minishell: no such file or directory: %s\n", d->argv[0]);
 	}
 	else if (pid < 0)
 		return (ft_printf("Fork failed to create a new process.\n") ? -1 : -1);
@@ -150,11 +149,11 @@ int		handler(char *string)
 	return (1);
 }
 
-
 int		main(int ac, char **av, char **env)
 {
 	char	*input;
 	int		ret;
+
 	(void)ac;
 	(void)av;
 	init_env(env);
