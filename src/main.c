@@ -6,7 +6,7 @@
 /*   By: aben-azz <aben-azz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/12/08 08:51:22 by aben-azz          #+#    #+#             */
-/*   Updated: 2019/03/28 01:49:48 by aben-azz         ###   ########.fr       */
+/*   Updated: 2019/03/28 01:52:15 by aben-azz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,11 +21,37 @@ static t_built g_built[] = {
 	{"exit", &ft_exit}
 };
 
+void display_prompt_prefix(void)
+{
+	char *string;
+
+	string = NULL;
+	string = getcwd(string, 20);
+	ft_printf("$%s %s> ", string, get_env("USER"));
+}
+
 int		ft_exit(t_data *data)
 {
 	(void)data;
 	exit(0);
 	return (0);
+}
+
+void signal_handler_command(int sig)
+{
+	if (sig != SIGINT)
+		return;
+	ft_printf("\n");
+	signal(SIGINT, signal_handler_command);
+}
+
+void signal_handler_empty(int sig)
+{
+	if (sig != SIGINT)
+		return;
+	ft_printf("\n");
+	display_prompt_prefix();
+	signal(SIGINT, signal_handler_empty);
 }
 
 int		exec_valid_command(t_data *d, int m)
@@ -37,8 +63,10 @@ int		exec_valid_command(t_data *d, int m)
 
 	path = ft_strsplit(get_env("PATH"), ':');
 	av = malloc(sizeof(char*) * 2048);
+	signal(SIGINT, signal_handler_empty);
 	if (!(pid = fork()))
 	{
+		//
 		(!m && *d->argv[0] == '\\' && *(d->argv[0] + 1) == '/') && ++d->argv[0];
 		if (!m && ~execve(d->argv[0], d->argv, NULL))
 			return (1);
@@ -93,6 +121,7 @@ int		handler(char *string)
 	return (1);
 }
 
+
 int		main(int ac, char **av, char **env)
 {
 	char	*input;
@@ -104,9 +133,10 @@ int		main(int ac, char **av, char **env)
 	ret = 1;
 	while (ret == 1)
 	{
-		ft_printf("$%s \x1b[36m\x1b[0m\x1b[31m\x1b[1m%s\x1b[0m\x1b[36m\x1b[0m>",
-			get_env("PWD"), get_env("USER"));
-		signal(SIGINT, sighandler);
+		display_prompt_prefix();
+		// ft_printf("$%s \x1b[36m\x1b[0m\x1b[31m\x1b[1m%s\x1b[0m\x1b[36m\x1b[0m>",
+		// 	get_env("PWD"), get_env("USER"));
+		signal(SIGINT, signal_handler_empty);
 		((ret = get_next_line(0, &input, '\n')) > 0) && handler(input);
 		if (ret == -1)
 			break ;
