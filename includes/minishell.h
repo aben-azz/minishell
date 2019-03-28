@@ -6,7 +6,7 @@
 /*   By: aben-azz <aben-azz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/02/03 09:25:27 by aben-azz          #+#    #+#             */
-/*   Updated: 2019/03/25 07:00:51 by aben-azz         ###   ########.fr       */
+/*   Updated: 2019/03/28 04:44:45 by aben-azz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@
 # include <math.h>
 # include <fcntl.h>
 # include <pthread.h>
+ #include <sys/stat.h>
 # define PREFIX "\x1b[36m$\x1b[0m\x1b[31m\x1b[1m"
 # define SUFFIX "\x1b[0m\x1b[36m>\x1b[0m"
 
@@ -28,6 +29,7 @@ typedef struct	s_data
 	char			**argv;
 }				t_data;
 char					**g_env;
+typedef struct stat t_stat;
 typedef struct	s_built
 {
 	char			*builtin;
@@ -39,7 +41,12 @@ int				ft_setenv(t_data *data);
 int				ft_unsetenv(t_data *data);
 int				ft_env(t_data *data);
 int				ft_exit(t_data *data);
+int				ft_clear(t_data *data);
 void			init_env(char **env);
 char			*get_env(char *name);
 int				env_len(char **env);
+int				ft_setenv(t_data *data);
+char			**realloc_env(int new_size);
+void			set_env_var(char *key, char *value);
+int				get_env_index(char *name);
 #endif

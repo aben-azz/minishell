@@ -6,7 +6,7 @@
 /*   By: aben-azz <aben-azz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/10/13 11:36:13 by aben-azz          #+#    #+#             */
-/*   Updated: 2019/03/25 05:47:39 by aben-azz         ###   ########.fr       */
+/*   Updated: 2019/03/28 04:16:59 by aben-azz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,6 +100,7 @@ int				ft_islower(int c);
 int				ft_isupper(int c);
 int				ft_is_space(int c);
 int				ft_indexof(char *source, char c);
+int				ft_lastindexof(char *source, char c);
 int				ft_count(char *source, char c);
 int				ft_repeat_char(int fd, char source, int c);
 void			*ft_memalloc(size_t size);

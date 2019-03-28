@@ -6,11 +6,15 @@
 /*   By: aben-azz <aben-azz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/12/08 08:51:22 by aben-azz          #+#    #+#             */
-/*   Updated: 2019/03/28 01:52:15 by aben-azz         ###   ########.fr       */
+/*   Updated: 2019/03/28 04:56:18 by aben-azz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "includes/minishell.h"
+#include <termios.h>
+#include <unistd.h>
+#include <term.h>
+#include <curses.h>
 
 static t_built g_built[] = {
 	{"echo", &ft_echo},
@@ -18,7 +22,8 @@ static t_built g_built[] = {
 	{"setenv", &ft_setenv},
 	{"unsetenv", &ft_unsetenv},
 	{"env", &ft_env},
-	{"exit", &ft_exit}
+	{"exit", &ft_exit},
+	{"clear", &ft_clear}
 };
 
 void display_prompt_prefix(void)
@@ -27,58 +32,83 @@ void display_prompt_prefix(void)
 
 	string = NULL;
 	string = getcwd(string, 20);
-	ft_printf("$%s %s> ", string, get_env("USER"));
+	ft_printf("\x1b[32m➜ \x1b[0m\x1b[37m\x1b[1m");
+	ft_printf("%s\x1b[0m \x1b[1m\x1b[35m%s\x1b[0m\x1b[32m> \x1b[0m", (string +
+		ft_lastindexof(string, '/') + 1), get_env("USER"));
 }
 
 int		ft_exit(t_data *data)
 {
 	(void)data;
+	ft_printf("exit en cours\n");
 	exit(0);
 	return (0);
 }
 
 void signal_handler_command(int sig)
 {
-	if (sig != SIGINT)
-		return;
-	ft_printf("\n");
-	signal(SIGINT, signal_handler_command);
+	if (sig == SIGINT)
+	{
+		signal(SIGINT, signal_handler_command);
+		ft_printf("\n");
+
+	}
 }
 
 void signal_handler_empty(int sig)
 {
-	if (sig != SIGINT)
-		return;
-	ft_printf("\n");
-	display_prompt_prefix();
-	signal(SIGINT, signal_handler_empty);
+	if (sig == SIGINT)
+	{
+		signal(SIGINT, signal_handler_empty);
+		ft_printf("\n");
+		display_prompt_prefix();
+	}
+}
+
+int execute(char **command, int dir)
+{
+	t_stat f;
+	if (lstat(command[0], &f) != -1)
+	{
+		// if (f.st_mode & S_IFDIR)
+		// {
+		// 	change_dir(command[0], 0);
+		// 	return (0);
+		// }
+		if (f.st_mode & S_IXUSR)
+			return (execve(command[0], command, NULL));
+	}
+	if (dir)
+		ft_printf("minishell: no such file or directory: %s\n", (command[0] + ft_lastindexof(command[0], '/') + 1));
+	else
+		ft_printf("minishell: no such file or directory: %s\n", command[0]);
+	return (0);
 }
 
 int		exec_valid_command(t_data *d, int m)
 {
-	pid_t 	pid;
+	pid_t	pid;
 	char	**av;
 	char	**path;
 	int		i;
 
 	path = ft_strsplit(get_env("PATH"), ':');
 	av = malloc(sizeof(char*) * 2048);
-	signal(SIGINT, signal_handler_empty);
+	signal(SIGINT, signal_handler_command);
 	if (!(pid = fork()))
 	{
-		//
 		(!m && *d->argv[0] == '\\' && *(d->argv[0] + 1) == '/') && ++d->argv[0];
-		if (!m && ~execve(d->argv[0], d->argv, NULL))
+		if (!m && ~execute(d->argv, 0))
 			return (1);
 		while (*path && (i = -1))
 		{
 			while (d->argv[++i])
 				av[i] = i ? d->argv[i] : ft_strjoin(ft_strjoin(*path++, "/"),
 					d->argv[0]);
-			if (~execve(av[0], av, NULL))
+			if (~execute(av, 1))
 				return (1);
 		}
-		ft_printf("minishell: no such file or directory: %s\n", d->argv[0]);
+		//ft_printf("minishell: no such file or directory: %s\n", d->argv[0]);
 	}
 	else if (pid < 0)
 		return (ft_printf("Fork failed to create a new process.\n") ? -1 : -1);
@@ -91,7 +121,7 @@ int		find_built(t_data *data)
 	int i;
 
 	i = -1;
-	while (++i < 6)
+	while (++i < 7)
 		if (!ft_strcmp(g_built[i].builtin, data->argv[0]))
 		{
 			g_built[i].function && g_built[i].function(data);
@@ -126,7 +156,6 @@ int		main(int ac, char **av, char **env)
 {
 	char	*input;
 	int		ret;
-
 	(void)ac;
 	(void)av;
 	init_env(env);
@@ -134,8 +163,6 @@ int		main(int ac, char **av, char **env)
 	while (ret == 1)
 	{
 		display_prompt_prefix();
-		// ft_printf("$%s \x1b[36m\x1b[0m\x1b[31m\x1b[1m%s\x1b[0m\x1b[36m\x1b[0m>",
-		// 	get_env("PWD"), get_env("USER"));
 		signal(SIGINT, signal_handler_empty);
 		((ret = get_next_line(0, &input, '\n')) > 0) && handler(input);
 		if (ret == -1)

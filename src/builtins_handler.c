@@ -6,7 +6,7 @@
 /*   By: aben-azz <aben-azz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/25 06:56:10 by aben-azz          #+#    #+#             */
-/*   Updated: 2019/03/28 01:52:12 by aben-azz         ###   ########.fr       */
+/*   Updated: 2019/03/28 04:45:28 by aben-azz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,17 +32,45 @@ int		ft_echo(t_data *data)
 	return (0);
 }
 
-int		ft_cd(t_data *data)
+int		ft_clear(t_data *data)
 {
 	(void)data;
-	ft_printf("commande cd\n");
+	ft_printf("\033c");
 	return (0);
 }
 
-int		ft_setenv(t_data *data)
+void			change_dir(char *path, int print_path)
+{
+	char	*cwd;
+	char	buff[4097];
+
+	(void)print_path;
+	cwd = getcwd(buff, 4096);
+	if (!chdir(path))
+	{
+		// if (print_path)
+		// {
+		// 	print_pth(path);
+		// 	ft_putchar('\n');
+		// }
+		//set_env_var("OLDPWD", cwd);
+	}
+	else
+	{
+		ft_printf("cd: ");
+		if (access(path, F_OK) == -1)
+			ft_printf("no such file or directory: ");
+		else if (access(path, R_OK) == -1)
+			ft_printf("permission denied: ");
+		else
+			ft_printf("not a directory: ");
+		ft_putendl(path);
+	}
+}
+
+int		ft_cd(t_data *data)
 {
 	(void)data;
-	ft_printf("commande setenv\n");
 	return (0);
 }
 
