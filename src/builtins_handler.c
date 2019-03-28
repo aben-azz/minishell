@@ -6,7 +6,7 @@
 /*   By: aben-azz <aben-azz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/25 06:56:10 by aben-azz          #+#    #+#             */
-/*   Updated: 2019/03/28 04:45:28 by aben-azz         ###   ########.fr       */
+/*   Updated: 2019/03/28 05:46:38 by aben-azz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,13 +71,6 @@ void			change_dir(char *path, int print_path)
 int		ft_cd(t_data *data)
 {
 	(void)data;
-	return (0);
-}
-
-int		ft_unsetenv(t_data *data)
-{
-	(void)data;
-	ft_printf("commande unsetenv\n");
 	return (0);
 }
 

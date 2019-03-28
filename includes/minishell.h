@@ -6,7 +6,7 @@
 /*   By: aben-azz <aben-azz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/02/03 09:25:27 by aben-azz          #+#    #+#             */
-/*   Updated: 2019/03/28 04:44:45 by aben-azz         ###   ########.fr       */
+/*   Updated: 2019/03/28 05:43:59 by aben-azz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ void			init_env(char **env);
 char			*get_env(char *name);
 int				env_len(char **env);
 int				ft_setenv(t_data *data);
-char			**realloc_env(int new_size);
+char			**realloc_env(int new_size, int exception);
 void			set_env_var(char *key, char *value);
 int				get_env_index(char *name);
 #endif
