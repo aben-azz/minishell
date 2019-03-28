@@ -6,7 +6,7 @@
 /*   By: aben-azz <aben-azz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/02/03 09:25:27 by aben-azz          #+#    #+#             */
-/*   Updated: 2019/03/28 07:41:41 by aben-azz         ###   ########.fr       */
+/*   Updated: 2019/03/28 20:10:11 by aben-azz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,24 +34,24 @@ typedef struct stat	t_stat;
 typedef struct	s_built
 {
 	char			*builtin;
-	int				(*function)(t_data *data);
+	int				(*function)(char **argv);
 }				t_built;
-int				ft_echo(t_data *data);
-int				ft_cd(t_data *data);
-int				ft_setenv(t_data *data);
-int				ft_unsetenv(t_data *data);
-int				ft_env(t_data *data);
-int				ft_exit(t_data *data);
-int				ft_clear(t_data *data);
+int				ft_echo(char **argv);
+int				ft_cd(char **argv);
+int				ft_setenv(char **argv);
+int				ft_unsetenv(char **argv);
+int				ft_env(char **argv);
+int				ft_exit(char **argv);
+int				ft_clear(char **argv);
 void			init_env(char **env);
 char			*get_env(char *name);
 int				env_len(char **env);
-int				ft_setenv(t_data *data);
+int				ft_setenv(char **argv);
 char			**realloc_env(int new_size, int exception);
 int				set_env(char *key, char *value);
 int				get_env_index(char *name);
 int				change_dir(char *path, int print_path);
-int				find_built(t_data *data);
+int				find_built(char **argv);
 void			signal_handler_command(int sig);
 void			signal_handler_empty(int sig);
 void			display_prompt_prefix(void);

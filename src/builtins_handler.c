@@ -6,7 +6,7 @@
 /*   By: aben-azz <aben-azz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/25 06:56:10 by aben-azz          #+#    #+#             */
-/*   Updated: 2019/03/28 07:50:12 by aben-azz         ###   ########.fr       */
+/*   Updated: 2019/03/28 20:10:10 by aben-azz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,36 +19,35 @@ static t_built g_built[] = {
 	{"unsetenv", &ft_unsetenv},
 	{"env", &ft_env},
 	{"exit", &ft_exit},
-	{"clear", &ft_clear}
 };
 
-int		find_built(t_data *data)
+int		find_built(char **argv)
 {
 	int i;
 
 	i = -1;
 	while (++i < 7)
-		if (!ft_strcmp(g_built[i].builtin, data->argv[0]))
+		if (!ft_strcmp(g_built[i].builtin, argv[0]))
 		{
-			g_built[i].function && g_built[i].function(data);
+			g_built[i].function && g_built[i].function(av);
 			return (1);
 		}
 	return (0);
 }
 
-int		ft_echo(t_data *data)
+int		ft_echo(char **argv)
 {
 	int i;
 
 	(void)data;
 	i = 0;
-	while (data->argv[++i])
+	while (argv[++i])
 	{
-		while (*data->argv[i])
+		while (*argv[i])
 		{
-			if (!~ft_indexof("\"'", *data->argv[i]))
-				ft_printf("%c", *data->argv[i]);
-			(void)data->argv[i]++;
+			if (!~ft_indexof("\"'", *argv[i]))
+				ft_printf("%c", *argv[i]);
+			(void)argv[i]++;
 		}
 		ft_printf(" ");
 	}
@@ -56,14 +55,14 @@ int		ft_echo(t_data *data)
 	return (0);
 }
 
-int		ft_clear(t_data *data)
+int		ft_clear(char **argv)
 {
 	(void)data;
 	ft_printf("\033c");
 	return (0);
 }
 
-int		ft_env(t_data *data)
+int		ft_env(char **argv)
 {
 	(void)data;
 	ft_printf("%r\n", g_env, env_len(g_env), "\n");

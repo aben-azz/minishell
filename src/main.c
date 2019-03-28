@@ -6,7 +6,7 @@
 /*   By: aben-azz <aben-azz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/12/08 08:51:22 by aben-azz          #+#    #+#             */
-/*   Updated: 2019/03/28 07:50:11 by aben-azz         ###   ########.fr       */
+/*   Updated: 2019/03/28 20:10:15 by aben-azz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,9 +26,11 @@ void	display_prompt_prefix(void)
 
 int		execute(char **cmd, int dir)
 {
+	(void)dir;
 	t_stat	f;
 	char	*s;
 	char	*buff;
+
 
 	buff = NULL;
 	buff = getcwd(buff, 4096);
@@ -42,38 +44,44 @@ int		execute(char **cmd, int dir)
 		if (f.st_mode & S_IFDIR)
 			return (change_dir(cmd[0], 0));
 		if (f.st_mode & S_IXUSR)
-			return (execve(cmd[0], cmd, NULL));
+			return (execve(cmd[0], cmd, g_env));
 	}
 	else if (lstat(s, &f) != -1 && (f.st_mode & S_IFDIR))
+	{
+		ft_printf("lstat ok\n");
 		return (change_dir(s, 0));
-	ft_printf("minishell: no such file or directory: %s\n", dir ? s : cmd[0]);
-	return (0);
+	}
+	return (-1);
 }
 
-int		exec_valid_command(t_data *d, int m)
+int		exec_valid_command(char **argv, int m)
 {
 	pid_t	pid;
 	char	**av;
 	char	**path;
 	int		i;
+	//char	*s;
 
+	//s = (cmd[0] + ft_lastindexof(cmd[0], '/') + 1);
 	path = ft_strsplit(get_env("PATH"), ':');
 	av = malloc(sizeof(char*) * 2048);
 	signal(SIGINT, signal_handler_command);
 	pid = fork();
 	if (pid == 0)
 	{
-		(!m && *d->argv[0] == '\\' && *(d->argv[0] + 1) == '/') && ++d->argv[0];
-		if (!m && ~execute(d->argv, 0))
+		(!m && *argv[0] == '\\' && *(argv[0] + 1) == '/') && ++argv[0];
+		if (!m && ~execute(argv, 0))
 			return (1);
 		while (*path && (i = -1))
 		{
-			while (d->argv[++i])
-				av[i] = i ? d->argv[i] : ft_strjoin(ft_strjoin(*path++, "/"),
-					d->argv[0]);
+			while (argv[++i])
+				av[i] = i ? argv[i] : ft_strjoin(ft_strjoin(*path++, "/"),
+					argv[0]);
 			if (~execute(av, 1))
-				;//return (1);
+				return (1);
 		}
+		ft_printf("minishell: command not found: %s\n", (av[0] + ft_lastindexof(av[0], '/') + 1));
+		exit(0);
 	}
 	else if (pid < 0)
 		return (ft_printf("Fork failed to create a new process.\n") ? -1 : -1);
@@ -84,19 +92,18 @@ int		exec_valid_command(t_data *d, int m)
 int		handler(char *string)
 {
 	char	**commands;
-	t_data	*data;
+	char	**argv;
 
-	data = malloc(sizeof(t_data));
 	commands = ft_strsplit(string, ';');
 	while (*commands)
 	{
-		data->argv = ft_strsplit(*commands++, ' ');
+		argv = ft_strsplit(*commands++, ' ');
 		if (!find_built(data))
 		{
-			while (ft_is_space(*data->argv[0]))
-				(void)*data->argv[0]++;
-			exec_valid_command(data, !(*data->argv[0] == '/' ||
-				(*data->argv[0] == '\\' && *(data->argv[0] + 1) == '/')));
+			while (ft_is_space(*argv[0]))
+				(void)*argv[0]++;
+			exec_valid_command(data, !(*argv[0] == '/' ||
+				(*argv[0] == '\\' && *(argv[0] + 1) == '/')));
 		}
 	}
 	return (1);
@@ -115,6 +122,7 @@ int		main(int ac, char **av, char **env)
 	{
 		display_prompt_prefix();
 		signal(SIGINT, signal_handler_empty);
+		//signal(SIGTSTP, signal_handler_stop);
 		((ret = get_next_line(0, &input, '\n')) > 0) && handler(input);
 		if (ret == -1)
 			break ;
