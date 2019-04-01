@@ -6,7 +6,7 @@
 /*   By: aben-azz <aben-azz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/28 05:59:29 by aben-azz          #+#    #+#             */
-/*   Updated: 2019/03/28 20:10:12 by aben-azz         ###   ########.fr       */
+/*   Updated: 2019/04/01 08:12:23 by aben-azz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,7 @@ static int		has_two_args(char **args)
 	{
 		if (args[3])
 		{
-			ft_putendl("cd: too many arguments");
+			ft_putendl("cd: too many arguments\n");
 			return (1);
 		}
 		cwd = getcwd(buff, 4096);

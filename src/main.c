@@ -6,7 +6,7 @@
 /*   By: aben-azz <aben-azz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/12/08 08:51:22 by aben-azz          #+#    #+#             */
-/*   Updated: 2019/03/28 20:10:15 by aben-azz         ###   ########.fr       */
+/*   Updated: 2019/04/01 08:12:27 by aben-azz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,12 +16,15 @@
 void	display_prompt_prefix(void)
 {
 	char *string;
+	char *name;
 
+	name = get_env("USER");
+	name || (name = "aben-azz~");
 	string = NULL;
 	string = getcwd(string, 20);
 	ft_printf("\x1b[32m➜ \x1b[0m\x1b[37m\x1b[1m");
 	ft_printf("%s\x1b[0m \x1b[1m\x1b[31m%s\x1b[0m\x1b[32m> \x1b[0m", (string +
-		ft_lastindexof(string, '/') + 1), get_env("USER"));
+		ft_lastindexof(string, '/') + 1), name);
 }
 
 int		execute(char **cmd, int dir)
@@ -98,11 +101,11 @@ int		handler(char *string)
 	while (*commands)
 	{
 		argv = ft_strsplit(*commands++, ' ');
-		if (!find_built(data))
+		if (!~find_built(argv))
 		{
 			while (ft_is_space(*argv[0]))
 				(void)*argv[0]++;
-			exec_valid_command(data, !(*argv[0] == '/' ||
+			exec_valid_command(argv, !(*argv[0] == '/' ||
 				(*argv[0] == '\\' && *(argv[0] + 1) == '/')));
 		}
 	}

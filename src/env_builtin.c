@@ -6,7 +6,7 @@
 /*   By: aben-azz <aben-azz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/28 04:41:17 by aben-azz          #+#    #+#             */
-/*   Updated: 2019/03/28 20:10:13 by aben-azz         ###   ########.fr       */
+/*   Updated: 2019/04/01 08:12:25 by aben-azz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,9 +29,9 @@ int		set_env(char *key, char *value)
 int		ft_setenv(char **argv)
 {
 	if (!argv[1])
-		return (ft_env(data));
+		return (ft_env(argv));
 	else if (argv[2] && argv[3])
-		return (ft_printf("setenv: Too many arguments.") > 0);
+		return (ft_printf("setenv: Too many arguments.\n") > 0);
 	return (set_env(argv[1], argv[2]));
 }
 
@@ -62,22 +62,22 @@ int		ft_unsetenv(char **argv)
 	char	*tmp;
 
 	if (!argv[1])
-		return (ft_env(data));
-	else if (argv[2] && argv[3])
-		return (ft_printf("setenv: Too many arguments.") > 0);
+		return (ft_env(argv));
+	else if (argv[2])
+		return (ft_printf("setenv: Too many arguments.\n") > 0);
 	tmp = ft_strjoin("=", argv[2]);
 	if (~(index = get_env_index(argv[1])))
 	{
 		if (!(g_env = realloc_env(index + 1, index)))
-			return (-1);
+			return (0);
 		return (0);
 	}
-	return (-1);
+	return (0);
 }
 
 int		ft_exit(char **argv)
 {
-	(void)data;
+	(void)argv;
 	exit(0);
 	return (0);
 }
