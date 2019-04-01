@@ -6,7 +6,7 @@
 /*   By: aben-azz <aben-azz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/25 06:57:16 by aben-azz          #+#    #+#             */
-/*   Updated: 2019/04/01 08:12:26 by aben-azz         ###   ########.fr       */
+/*   Updated: 2019/04/01 08:55:15 by aben-azz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,7 @@ int		get_env_index(char *name)
 	while (g_env[++i])
 		if (!ft_strcmp(ft_strsub(g_env[i], 0, ft_indexof(g_env[i], '=')), name))
 			return (i);
-	return (0);
+	return (-1);
 }
 
 void	signal_handler_empty(int sig)

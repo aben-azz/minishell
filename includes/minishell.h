@@ -6,7 +6,7 @@
 /*   By: aben-azz <aben-azz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/02/03 09:25:27 by aben-azz          #+#    #+#             */
-/*   Updated: 2019/03/28 20:10:11 by aben-azz         ###   ########.fr       */
+/*   Updated: 2019/04/01 08:55:13 by aben-azz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,12 +38,10 @@ typedef struct	s_built
 }				t_built;
 int				ft_echo(char **argv);
 int				ft_cd(char **argv);
-int				ft_setenv(char **argv);
 int				ft_unsetenv(char **argv);
 int				ft_env(char **argv);
 int				ft_exit(char **argv);
 int				ft_clear(char **argv);
-void			init_env(char **env);
 char			*get_env(char *name);
 int				env_len(char **env);
 int				ft_setenv(char **argv);
@@ -54,5 +52,6 @@ int				change_dir(char *path, int print_path);
 int				find_built(char **argv);
 void			signal_handler_command(int sig);
 void			signal_handler_empty(int sig);
-void			display_prompt_prefix(void);
+void	init_env(char **env);
+void			display_prompt_prefix();
 #endif
