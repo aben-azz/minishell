@@ -6,7 +6,7 @@
 /*   By: aben-azz <aben-azz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/10/13 11:36:13 by aben-azz          #+#    #+#             */
-/*   Updated: 2019/03/28 06:42:47 by aben-azz         ###   ########.fr       */
+/*   Updated: 2019/04/01 10:12:02 by aben-azz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -166,4 +166,5 @@ long long		ft_rand(long long n);
 int				ft_strendswith(char *s1, char *s2);
 int				ft_strstartswith(char *s1, char *s2);
 char			*ft_strreplace(char *orig, char *rep, char *with);
+char			**ft_strsplitwhitespace(char *orig);
 #endif

@@ -6,7 +6,7 @@
 /*   By: aben-azz <aben-azz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/12/08 08:51:22 by aben-azz          #+#    #+#             */
-/*   Updated: 2019/04/01 08:55:14 by aben-azz         ###   ########.fr       */
+/*   Updated: 2019/04/01 10:11:31 by aben-azz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,7 +100,7 @@ int		handler(char *string)
 	commands = ft_strsplit(string, ';');
 	while (*commands)
 	{
-		argv = ft_strsplit(*commands++, ' ');
+		argv = ft_strsplitwhitespace(*commands++);
 		if (!~find_built(argv))
 		{
 			while (ft_is_space(*argv[0]))
