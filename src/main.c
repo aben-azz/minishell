@@ -6,7 +6,7 @@
 /*   By: aben-azz <aben-azz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/12/08 08:51:22 by aben-azz          #+#    #+#             */
-/*   Updated: 2019/04/01 10:11:31 by aben-azz         ###   ########.fr       */
+/*   Updated: 2019/04/01 12:50:08 by aben-azz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,9 +63,7 @@ int		exec_valid_command(char **argv, int m)
 	char	**av;
 	char	**path;
 	int		i;
-	//char	*s;
 
-	//s = (cmd[0] + ft_lastindexof(cmd[0], '/') + 1);
 	path = ft_strsplit(get_env("PATH"), ':');
 	av = malloc(sizeof(char*) * 2048);
 	signal(SIGINT, signal_handler_command);

@@ -6,7 +6,7 @@
 /*   By: aben-azz <aben-azz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/28 04:41:17 by aben-azz          #+#    #+#             */
-/*   Updated: 2019/04/01 08:55:16 by aben-azz         ###   ########.fr       */
+/*   Updated: 2019/04/01 12:50:10 by aben-azz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,8 +47,7 @@ char	**realloc_env(int new_size, int exception)
 	j = 0;
 	while (g_env[++i] && i < new_size)
 	{
-		if (~exception && j == exception)
-			j++;
+		(~exception && j == exception) && j++;
 		new[i] = ft_strdup(g_env[j++]);
 		free(g_env[i]);
 	}
@@ -59,13 +58,11 @@ char	**realloc_env(int new_size, int exception)
 int		ft_unsetenv(char **argv)
 {
 	int		index;
-	char	*tmp;
 
 	if (!argv[1])
 		return (ft_env(argv));
 	else if (argv[2])
 		return (ft_printf("setenv: Too many arguments.\n") > 0);
-	tmp = ft_strjoin("=", argv[2]);
 	if (~(index = get_env_index(argv[1])))
 	{
 		if (!(g_env = realloc_env(index + 1, index)))

@@ -6,7 +6,7 @@
 /*   By: aben-azz <aben-azz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/28 05:59:29 by aben-azz          #+#    #+#             */
-/*   Updated: 2019/04/01 08:55:17 by aben-azz         ###   ########.fr       */
+/*   Updated: 2019/04/01 12:50:11 by aben-azz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,8 @@
 
 static void		print_pth(char *path)
 {
+	if (!path)
+		return ;
 	ft_putstr(path);
 }
 

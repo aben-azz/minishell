@@ -6,7 +6,7 @@
 /*   By: aben-azz <aben-azz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/25 06:56:10 by aben-azz          #+#    #+#             */
-/*   Updated: 2019/04/01 08:55:18 by aben-azz         ###   ########.fr       */
+/*   Updated: 2019/04/01 12:50:13 by aben-azz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,13 +45,6 @@ int		ft_echo(char **argv)
 		ft_printf(" ");
 	}
 	ft_printf(" \n");
-	return (0);
-}
-
-int		ft_clear(char **argv)
-{
-	(void)argv;
-	ft_printf("\033c");
 	return (0);
 }
 
