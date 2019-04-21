@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "includes/minishell.h"
+#include "minishell.h"
 
 int		env_len(char **env)
 {
@@ -55,7 +55,7 @@ int		get_env_index(char *name)
 
 	i = -1;
 	if (!name)
-		return (NULL);
+		return (-1);
 	while (g_env[++i])
 		if (!ft_strcmp(ft_strsub(g_env[i], 0, ft_indexof(g_env[i], '=')), name))
 			return (i);

@@ -10,7 +10,6 @@
 #                                                                              #
 # **************************************************************************** #
 
-
 _END			=	\x1b[0m
 _BOLD			=	\x1b[1m
 _UNDER			=	\x1b[4m
@@ -31,57 +30,61 @@ _IBLUE			=	\x1b[44m
 _IPURPLE		=	\x1b[45m
 _ICYAN			=	\x1b[46m
 _IWHITE			=	\x1b[47m
-MSG				=	Compilation de minishell
-.PHONY: all, $(NAME), clean, fclean, re
+NAME		=	minishell
+CC			=	gcc
+FLAGS		=	-Wall -Wextra -Werror -Ofast
+D_FLAGS		=	-g
+DELTA		=	$$(echo "$$(tput cols)-47"|bc)
+LIBFT_DIR	=	libft/
+LIBFT_LIB	=	$(LIBFT_DIR)libft.a
+LIBFT_INC	=	$(LIBFT_DIR)includes/
+SRC_DIR		=	src/
+INC_DIR		=	includes/
+OBJ_DIR		=	obj/
+SRC_BASE 	= main.c env.c env_builtin.c cd_builtin.c builtins_handler.c
+SRCS		=	$(addprefix $(SRC_DIR), $(SRC_BASE))
+OBJS		=	$(addprefix $(OBJ_DIR), $(SRC_BASE:.c=.o))
+NB			=	$(words $(SRC_BASE))
+INDEX		=	0
 
-NAME = minishell
+all :
+	@make -C $(LIBFT_DIR)
+	@make -j $(NAME)
 
-cc = gcc
-C_FLAGS = -Wall -Wextra -Werror
+$(NAME):		$(LIBFT_LIB) $(OBJ_DIR) $(OBJS)
+	@$(CC) $(OBJS) -o $(NAME) \
+		-I $(INC_DIR) -I $(LIBFT_INC) $(LIBS) $(LIBFT_LIB) $(FLAGS) $(D_FLAGS)
+	@printf "\r\x1b[32m✅  DONE $(NAME)\033[0m\033[K\n"
 
-OBJ_PATH = ./obj/
-LFT_PATH = ./libft/
-INC_PATH = ./
-SRC_PATH = ./src/
+$(LIBFT_LIB):
+	@make -C $(LIBFT_DIR)
 
-SRC_NAME = main.c env.c builtins_handler.c env_builtin.c cd_builtin.c
-OBJ_NAME = $(SRC_NAME:.c=.o)
+$(OBJ_DIR) :
+	@mkdir -p $(OBJ_DIR)
+	@mkdir -p $(dir $(OBJS))
 
-SRC = $(addprefix $(SRC_PATH),$(SRC_NAME))
-LONGEST			=	$(shell echo $(notdir $(SRC)) | tr " " "\n" | awk ' { if (\
-				length > x ) { x = length; y = $$0 } }END{ print y }' | wc -c)
-OBJ = $(addprefix $(OBJ_PATH),$(OBJ_NAME))
-INC = $(addprefix -I,$(INC_PATH))
+$(OBJ_DIR)%.o :	$(SRC_DIR)%.c | $(OBJ_DIR)
+	@$(eval DONE=$(shell echo $$(($(INDEX)*20/$(NB)))))
+	@$(eval PERCENT=$(shell echo $$(($(INDEX)*100/$(NB)))))
+	@$(eval COLOR=$(shell echo $$(($(PERCENT)%35+196))))
+	@$(eval TO_DO=$(shell echo $$((20-$(INDEX)*20/$(NB)))))
+	@printf "\r\033[38;5;11m%2.100s: %2d%% \033[48;5;%dm%*s\033[0m%*s\033[48;5;255m \033[0m \033[38;5;11m %*.*s\033[0m\033[K" $(NAME) $(PERCENT) $(COLOR) $(DONE) "" $(TO_DO) "" $(DELTA) $(DELTA) "$@"
+	@$(CC) $(FLAGS) $(D_FLAGS)  -c $< -o $@\
+		-I $(INC_DIR)\
+		-I $(LIBFT_INC)
+	@$(eval INDEX=$(shell echo $$(($(INDEX)+1))))
+clean:			cleanlib
+	@rm -rf $(OBJ_DIR)
+	@printf "\r\033[38;5;202m✖  clean $(NAME).\033[0m\033[K\n"
 
-all: $(LIBFT_PATH)$(LIBFT_NAME) $(NAME)
+cleanlib:
+	@make -C $(LIBFT_DIR) clean
 
-$(LIBFT_PATH)$(LIBFT_NAME):
-	@$(MAKE) -C $(LIBFT_PATH);
+fclean:			clean fcleanlib
+	@rm -f $(NAME)
+	@printf "\r\033[38;5;196m❌ fclean $(NAME).\033[0m\033[K\n"
 
-$(NAME):  $(OBJ) $(LIBFT_PATH)$(LIBFT_NAME)
-		@echo
-		@make -C $(LFT_PATH)
-		@$(CC) -o $(NAME) -L $(LFT_PATH) -lft $^ -o $@
-		@printf "$(_BOLD)$(_RED)Executable ./minishell pret \n$(_END)$(_CYAN)$(_END)"
+fcleanlib:		cleanlib
+	@make -C $(LIBFT_DIR) fclean
 
-
-$(OBJ_PATH)%.o: $(SRC_PATH)%.c includes/minishell.h
-		@mkdir -p $(OBJ_PATH) 2> /dev/null || true
-		@$(CC) $(C_FLAGS) $(INC) -o $@ -c $<
-		@printf "$(_BOLD)$(_PURPLE)$(MSG)$(_END) $(_CYAN)%-$(LONGEST)s\
-		$(_END)" $(notdir $<)
-		@if test -s src/$*.c; then \
-		printf "$(_GREEN) [OK]\n$(_END)";\
-		else \
-		printf "$(_RED) [ERROR]\n$(_END)"; fi
-
-
-clean:
-		@make -C $(LFT_PATH) clean
-		@rm -rf $(OBJ_PATH)
-
-fclean: clean
-		@make -C $(LFT_PATH) fclean
-		@rm -f $(NAME)
-
-re: fclean all
+re:				fclean all
