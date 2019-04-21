@@ -6,7 +6,7 @@
 /*   By: aben-azz <aben-azz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/12/08 08:51:22 by aben-azz          #+#    #+#             */
-/*   Updated: 2019/04/21 07:55:27 by aben-azz         ###   ########.fr       */
+/*   Updated: 2019/04/21 07:56:12 by aben-azz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,7 +72,8 @@ int		exec_valid_command(char **argv, int m)
 	wait(&pid);
 	return (1);
 }
-int		shortcut_cd(char **cmd)
+
+int		quick_cd(char **cmd)
 {
 	char *s;
 	t_stat f;
@@ -94,11 +95,11 @@ int		shortcut_cd(char **cmd)
 	}
 	else if (lstat(s, &f) != -1 && (f.st_mode & S_IFDIR))
 	{
-		//ft_printf("lstat ok\n");
 		return (change_dir(s, 0));
 	}
 	return (-1);
 }
+
 int		handler(char *string)
 {
 	char	**commands;
@@ -112,7 +113,7 @@ int		handler(char *string)
 		{
 			while (ft_is_space(*argv[0]))
 				(void)*argv[0]++;
-			if (!~shortcut_cd(argv))
+			if (!~quick_cd(argv))
 				exec_valid_command(argv, !(*argv[0] == '/' ||
 					(*argv[0] == '\\' && *(argv[0] + 1) == '/')));
 		}
