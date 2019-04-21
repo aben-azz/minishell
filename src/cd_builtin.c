@@ -6,7 +6,7 @@
 /*   By: aben-azz <aben-azz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/28 05:59:29 by aben-azz          #+#    #+#             */
-/*   Updated: 2019/04/21 07:55:30 by aben-azz         ###   ########.fr       */
+/*   Updated: 2019/04/21 07:59:45 by aben-azz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,13 +37,12 @@ int				change_dir(char *path, int print_path)
 	}
 	else
 	{
-		ft_putstr("cd: ");
 		if (access(path, F_OK) == -1)
-			ft_putstr("no such file or directory: ");
+			ft_putstr("cd: no such file or directory: ");
 		else if (access(path, R_OK) == -1)
-			ft_putstr("permission denied: ");
+			ft_putstr("cd: permission denied: ");
 		else
-			ft_putstr("not a directory: ");
+			ft_putstr("cd: not a directory: ");
 		ft_putendl(path);
 	}
 	return (1);
@@ -114,4 +113,31 @@ void			signal_handler_command(int sig)
 		signal(SIGINT, signal_handler_command);
 		ft_printf("\n");
 	}
+}
+
+int		quick_cd(char **cmd)
+{
+	char	*s;
+	t_stat	f;
+	char	*buff;
+
+	buff = NULL;
+	buff = getcwd(buff, 4096);
+	s = (cmd[0] + ft_lastindexof(cmd[0], '/') + 1);
+	if (!ft_strcmp(s, ".."))
+		return (change_dir(ft_strsub(buff, 0, ft_lastindexof(buff, '/')), 0));
+	else if (!ft_strcmp(s, "~"))
+		return (change_dir(get_env("HOME"), 0));
+	else if (lstat(cmd[0], &f) != -1)
+	{
+		if (f.st_mode & S_IFDIR)
+			return (change_dir(cmd[0], 0));
+		else
+			return (-1);
+	}
+	else if (lstat(s, &f) != -1 && (f.st_mode & S_IFDIR))
+	{
+		return (change_dir(s, 0));
+	}
+	return (-1);
 }

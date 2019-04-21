@@ -6,32 +6,18 @@
 /*   By: aben-azz <aben-azz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/12/08 08:51:22 by aben-azz          #+#    #+#             */
-/*   Updated: 2019/04/21 07:56:12 by aben-azz         ###   ########.fr       */
+/*   Updated: 2019/04/21 08:02:25 by aben-azz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 #include <unistd.h>
 
-void	display_prompt_prefix(void)
-{
-	char *string;
-	char *name;
-
-	name = get_env("USER");
-	name || (name = "aben-azz~");
-	string = NULL;
-	string = getcwd(string, 20);
-	ft_printf("\x1b[32m➜ \x1b[0m\x1b[37m\x1b[1m");
-	ft_printf("%s\x1b[0m \x1b[1m\x1b[31m%s\x1b[0m\x1b[32m> \x1b[0m", (string +
-		ft_lastindexof(string, '/') + 1), name);
-}
-
 int		execute(char **cmd, int dir)
 {
-	(void)dir;
 	t_stat	f;
 
+	(void)dir;
 	if (lstat(cmd[0], &f) != -1)
 	{
 		if (f.st_mode & S_IXUSR)
@@ -64,40 +50,14 @@ int		exec_valid_command(char **argv, int m)
 			if (~execute(av, 1))
 				return (1);
 		}
-		ft_printf("minishell: command not found: %s\n", (av[0] + ft_lastindexof(av[0], '/') + 1));
+		ft_printf("minishell: command not found: %s\n",
+			(av[0] + ft_lastindexof(av[0], '/') + 1));
 		exit(0);
 	}
 	else if (pid < 0)
 		return (ft_printf("Fork failed to create a new process.\n") ? -1 : -1);
 	wait(&pid);
 	return (1);
-}
-
-int		quick_cd(char **cmd)
-{
-	char *s;
-	t_stat f;
-	char *buff;
-
-	buff = NULL;
-	buff = getcwd(buff, 4096);
-	s = (cmd[0] + ft_lastindexof(cmd[0], '/') + 1);
-	if (!ft_strcmp(s, ".."))
-		return (change_dir(ft_strsub(buff, 0, ft_lastindexof(buff, '/')), 0));
-	else if (!ft_strcmp(s, "~"))
-		return (change_dir(get_env("HOME"), 0));
-	else if (lstat(cmd[0], &f) != -1)
-	{
-		if (f.st_mode & S_IFDIR)
-			return (change_dir(cmd[0], 0));
-		else
-			return (-1);
-	}
-	else if (lstat(s, &f) != -1 && (f.st_mode & S_IFDIR))
-	{
-		return (change_dir(s, 0));
-	}
-	return (-1);
 }
 
 int		handler(char *string)
@@ -134,7 +94,6 @@ int		main(int ac, char **av, char **env)
 	{
 		display_prompt_prefix();
 		signal(SIGINT, signal_handler_empty);
-		//signal(SIGTSTP, signal_handler_stop);
 		((ret = get_next_line(0, &input, '\n')) > 0) && handler(input);
 		if (ret == -1)
 			break ;

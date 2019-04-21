@@ -6,7 +6,7 @@
 /*   By: aben-azz <aben-azz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/02/03 09:25:27 by aben-azz          #+#    #+#             */
-/*   Updated: 2019/04/01 08:55:13 by aben-azz         ###   ########.fr       */
+/*   Updated: 2019/04/21 08:02:12 by aben-azz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,8 +21,8 @@
 # include <pthread.h>
 # include <signal.h>
 # include <sys/stat.h>
-# define PREFIX "\x1b[36m$\x1b[0m\x1b[31m\x1b[1m"
-# define SUFFIX "\x1b[0m\x1b[36m>\x1b[0m"
+# define PREFIX "\x1b[32m➜ \x1b[0m\x1b[37m\x1b[1m"
+# define SUFFIX "%s\x1b[0m \x1b[1m\x1b[31m%s\x1b[0m\x1b[32m> \x1b[0m"
 
 typedef struct	s_data
 {
