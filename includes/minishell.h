@@ -6,7 +6,7 @@
 /*   By: aben-azz <aben-azz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/02/03 09:25:27 by aben-azz          #+#    #+#             */
-/*   Updated: 2019/04/21 08:04:24 by aben-azz         ###   ########.fr       */
+/*   Updated: 2019/04/21 11:26:22 by aben-azz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,4 +54,26 @@ void			signal_handler_command(int sig);
 void			signal_handler_empty(int sig);
 void			init_env(char **env);
 void			display_prompt_prefix();
+int				quick_cd(char **cmd);
 #endif
+
+/*
+
+** $VAR => Get value of VAR
+** $#VAR => Get length value of VAR
+** $VAR[i] => Get ith element value of VAR
+** $VAR[i,x] => Get element betwin i and x of value of VAR
+
+$var[: i]
+	As above, but now splitting occurs at the colon character.
+$var[: i j]
+	As above, but instead of returning just a string, it now returns a list of two strings. If the result is being interpolated into a larger string,
+		this list will be flattened into one big string, with each element separated by a space.
+$var["\\\\" i]
+	Separate on backslash characters. Actually, the first argument – if it doesn't have the form of a number,
+	or a plain variable name – can be any regular expression. So to split on numbers, use ‘$var["[0-9]+" 10 20]’.
+$var[hello]
+	Calls assoc on var with "hello", expecting it to be an alist (see Association Lists).
+$#var[hello]
+	Returns the length of the cdr of the element of var who car is equal to "hello".
+*/
