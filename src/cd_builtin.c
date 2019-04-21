@@ -6,7 +6,7 @@
 /*   By: aben-azz <aben-azz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/28 05:59:29 by aben-azz          #+#    #+#             */
-/*   Updated: 2019/04/01 12:50:11 by aben-azz         ###   ########.fr       */
+/*   Updated: 2019/04/21 07:55:30 by aben-azz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,7 @@ int				change_dir(char *path, int print_path)
 			ft_putchar('\n');
 		}
 		set_env("OLDPWD", cwd);
+		set_env("PWD", getcwd(buff, 4096));
 	}
 	else
 	{

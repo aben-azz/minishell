@@ -6,7 +6,7 @@
 /*   By: aben-azz <aben-azz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/12/08 08:51:22 by aben-azz          #+#    #+#             */
-/*   Updated: 2019/04/01 12:50:08 by aben-azz         ###   ########.fr       */
+/*   Updated: 2019/04/21 07:55:27 by aben-azz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,28 +31,11 @@ int		execute(char **cmd, int dir)
 {
 	(void)dir;
 	t_stat	f;
-	char	*s;
-	char	*buff;
 
-
-	buff = NULL;
-	buff = getcwd(buff, 4096);
-	s = (cmd[0] + ft_lastindexof(cmd[0], '/') + 1);
-	if (!ft_strcmp(s, ".."))
-		return (change_dir(ft_strsub(buff, 0, ft_lastindexof(buff, '/')), 0));
-	else if (!ft_strcmp(s, "~"))
-		return (change_dir(get_env("HOME"), 0));
-	else if (lstat(cmd[0], &f) != -1)
+	if (lstat(cmd[0], &f) != -1)
 	{
-		if (f.st_mode & S_IFDIR)
-			return (change_dir(cmd[0], 0));
 		if (f.st_mode & S_IXUSR)
 			return (execve(cmd[0], cmd, g_env));
-	}
-	else if (lstat(s, &f) != -1 && (f.st_mode & S_IFDIR))
-	{
-		ft_printf("lstat ok\n");
-		return (change_dir(s, 0));
 	}
 	return (-1);
 }
@@ -89,7 +72,33 @@ int		exec_valid_command(char **argv, int m)
 	wait(&pid);
 	return (1);
 }
+int		shortcut_cd(char **cmd)
+{
+	char *s;
+	t_stat f;
+	char *buff;
 
+	buff = NULL;
+	buff = getcwd(buff, 4096);
+	s = (cmd[0] + ft_lastindexof(cmd[0], '/') + 1);
+	if (!ft_strcmp(s, ".."))
+		return (change_dir(ft_strsub(buff, 0, ft_lastindexof(buff, '/')), 0));
+	else if (!ft_strcmp(s, "~"))
+		return (change_dir(get_env("HOME"), 0));
+	else if (lstat(cmd[0], &f) != -1)
+	{
+		if (f.st_mode & S_IFDIR)
+			return (change_dir(cmd[0], 0));
+		else
+			return (-1);
+	}
+	else if (lstat(s, &f) != -1 && (f.st_mode & S_IFDIR))
+	{
+		//ft_printf("lstat ok\n");
+		return (change_dir(s, 0));
+	}
+	return (-1);
+}
 int		handler(char *string)
 {
 	char	**commands;
@@ -103,8 +112,9 @@ int		handler(char *string)
 		{
 			while (ft_is_space(*argv[0]))
 				(void)*argv[0]++;
-			exec_valid_command(argv, !(*argv[0] == '/' ||
-				(*argv[0] == '\\' && *(argv[0] + 1) == '/')));
+			if (!~shortcut_cd(argv))
+				exec_valid_command(argv, !(*argv[0] == '/' ||
+					(*argv[0] == '\\' && *(argv[0] + 1) == '/')));
 		}
 	}
 	return (1);
