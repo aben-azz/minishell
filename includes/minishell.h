@@ -6,7 +6,7 @@
 /*   By: aben-azz <aben-azz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/02/03 09:25:27 by aben-azz          #+#    #+#             */
-/*   Updated: 2019/04/21 08:02:12 by aben-azz         ###   ########.fr       */
+/*   Updated: 2019/04/21 08:04:24 by aben-azz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,6 +52,6 @@ int				change_dir(char *path, int print_path);
 int				find_built(char **argv);
 void			signal_handler_command(int sig);
 void			signal_handler_empty(int sig);
-void	init_env(char **env);
+void			init_env(char **env);
 void			display_prompt_prefix();
 #endif
