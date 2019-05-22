@@ -6,13 +6,13 @@
 /*   By: aben-azz <aben-azz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/02/03 09:25:27 by aben-azz          #+#    #+#             */
-/*   Updated: 2019/04/21 11:26:22 by aben-azz         ###   ########.fr       */
+/*   Updated: 2019/05/22 14:07:39 by aben-azz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef MINISHELL_H
 # define MINISHELL_H
-# include "libft.h"
+# include "../libft/includes/libft.h"
 # include <stdio.h>
 # include <unistd.h>
 # include <stdlib.h>
