@@ -6,7 +6,7 @@
 /*   By: aben-azz <aben-azz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/25 06:57:16 by aben-azz          #+#    #+#             */
-/*   Updated: 2019/04/21 11:26:16 by aben-azz         ###   ########.fr       */
+/*   Updated: 2019/05/22 16:02:17 by aben-azz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,8 +43,7 @@ char	*get_env(char *name)
 	if (!name)
 		return (NULL);
 	if (~(i = get_env_index(name)))
-		return (ft_strsub(g_env[i], ft_indexof(g_env[i], '=') + 1,
-			ft_strlen(g_env[i])));
+		return (g_env[i] + ft_indexof(g_env[i], '=') + 1);
 	else
 		return (NULL);
 }
@@ -52,13 +51,23 @@ char	*get_env(char *name)
 int		get_env_index(char *name)
 {
 	int i;
+	char *string;
 
 	i = -1;
 	if (!name)
 		return (-1);
 	while (g_env[++i])
-		if (!ft_strcmp(ft_strsub(g_env[i], 0, ft_indexof(g_env[i], '=')), name))
+	{
+		if (!(string = ft_strsub(g_env[i], 0, ft_indexof(g_env[i], '='))))
+			return (-1);
+		if (!ft_strcmp(string, name))
+		{
+			ft_strdel(&string);
 			return (i);
+		}
+		ft_strdel(&string);
+	}
+	//ft_strdel(&string);
 	return (-1);
 }
 

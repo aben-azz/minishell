@@ -6,7 +6,7 @@
 /*   By: aben-azz <aben-azz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/28 05:59:29 by aben-azz          #+#    #+#             */
-/*   Updated: 2019/04/21 11:26:18 by aben-azz         ###   ########.fr       */
+/*   Updated: 2019/05/22 15:54:47 by aben-azz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -119,10 +119,10 @@ int		quick_cd(char **cmd)
 {
 	char	*s;
 	t_stat	f;
-	char	*buff;
+	char	buff[4096];
 
-	buff = NULL;
-	buff = getcwd(buff, 4096);
+	ft_bzero(buff, 4096);
+	getcwd(buff, 4096);
 	s = (cmd[0] + ft_lastindexof(cmd[0], '/') + 1);
 	if (!ft_strcmp(s, ".."))
 		return (change_dir(ft_strsub(buff, 0, ft_lastindexof(buff, '/')), 0));

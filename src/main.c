@@ -6,7 +6,7 @@
 /*   By: aben-azz <aben-azz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/12/08 08:51:22 by aben-azz          #+#    #+#             */
-/*   Updated: 2019/04/21 11:26:15 by aben-azz         ###   ########.fr       */
+/*   Updated: 2019/05/22 17:34:48 by aben-azz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,31 +23,47 @@ int		execute(char **cmd, int dir)
 		if (f.st_mode & S_IXUSR)
 			return (execve(cmd[0], cmd, g_env));
 	}
+	ft_splitdel2(cmd);
 	return (-1);
+}
+
+int	ft_free(char **arg, int n)
+{
+	ft_splitdel2(arg);
+	return (n);
 }
 
 int		exec_valid_command(char **argv, int m)
 {
 	pid_t	pid;
-	char	**av;
+	char	*av[2096];
 	char	**path;
 	int		i;
 
-	path = ft_strsplit(get_env("PATH"), ':');
-	av = malloc(sizeof(char*) * 2048);
+	i = -1;
+	while (++i < 2096)
+		av[i] = NULL;
+	if (!(path = ft_strsplit(get_env("PATH"), ':')))
+		return (0);
 	signal(SIGINT, signal_handler_command);
 	if (!(pid = fork()))
 	{
 		(!m && *argv[0] == '\\' && *(argv[0] + 1) == '/') && ++argv[0];
 		if (!m && ~execute(argv, 0))
-			return (1);
+			return (ft_free(path, 1));
 		while (*path && (i = -1))
 		{
 			while (argv[++i])
-				av[i] = i ? argv[i] : ft_strjoin(ft_strjoin(*path++, "/"),
-					argv[0]);
+			{
+				if (i)
+					av[i] = argv[i];
+				else
+				{
+					av[i] = ft_strcjoin(*path++, argv[0], '/');
+				}
+			}
 			if (~execute(av, 1))
-				return (1);
+				return (ft_free(av, 1));
 		}
 		ft_printf("minishell: command not found: %s\n",
 			(av[0] + ft_lastindexof(av[0], '/') + 1));
@@ -56,7 +72,7 @@ int		exec_valid_command(char **argv, int m)
 	else if (pid < 0)
 		return (ft_printf("Fork failed to create a new process.\n") ? -1 : -1);
 	wait(&pid);
-	return (1);
+	return (ft_free(av, 1));
 }
 
 int		is_expansion_printable(char *s, int dollar_index, int i)
@@ -105,8 +121,9 @@ char	*expansion_dollar(char *string)
 		i++;
 	if (is_expansion_printable(string, dollar_index, i))
 	{
+		ft_strdel(&string);
 		act_env = ft_substr(string, dollar_index, i);
-		replaced = get_expansion(string, act_env, length);
+		return (get_expansion(string, act_env, length));
 	}
 	return (replaced);
 }
@@ -132,6 +149,8 @@ int		handler(char *string)
 					(*argv[0] == '\\' && *(argv[0] + 1) == '/')));
 		}
 	}
+	ft_strdel(&string);
+	ft_splitdel(argv);
 	return (1);
 }
 
