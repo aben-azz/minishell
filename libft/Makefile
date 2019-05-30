@@ -6,7 +6,7 @@
 #    By: midrissi <midrissi@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/10/09 12:43:35 by midrissi          #+#    #+#              #
-#    Updated: 2019/05/22 17:17:56 by aben-azz         ###   ########.fr        #
+#    Updated: 2019/05/22 14:03:31 by aben-azz         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -32,7 +32,7 @@ numbers.c format_geters.c handlers.c ft_splitdel.c \
 ft_abs.c ft_get_color.c ft_percent.c ft_interpolate.c ft_split_count.c \
 ft_strcjoin.c ft_strsplitstr.c ft_count_words_str.c ft_lastindexof.c \
 ft_indexof.c ft_levenshtein.c ft_substr.c ft_strreplace.c ft_is_space.c \
-ft_strsplitwhitespace.c ft_splitdel2.c
+ft_strsplitwhitespace.c
 
 _END			=	\x1b[0m
 _BOLD			=	\x1b[1m
@@ -63,7 +63,7 @@ SRCS := $(SRC:%=$(SRCPATH)%)
 OBJ := $(SRC:%.c=$(OBJPATH)%.o)
 
 COMP = gcc
-CFLAGS = -Wall -Wextra -Werror -I./includes -c -g -v
+CFLAGS = -Wall -Wextra -Werror -I./includes -c
 AR = ar rcs
 
 LONGEST			=	$(shell echo $(notdir $(SRCS)) | tr " " "\n" | awk ' { if (\

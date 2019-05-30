@@ -6,7 +6,7 @@
 /*   By: midrissi <midrissi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/10/04 13:56:36 by midrissi          #+#    #+#             */
-/*   Updated: 2019/05/22 17:15:58 by aben-azz         ###   ########.fr       */
+/*   Updated: 2019/05/22 14:01:44 by aben-azz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -145,7 +145,6 @@ int				ft_get_color(int color1, int color2, double percentage);
 double			ft_percent(int start, int end, int curr);
 int				ft_split_count(char **split);
 void			ft_splitdel(char **split);
-void			ft_splitdel2(char **split);
 char			*ft_strcjoin(char const *s1, char const *s2, char c);
 char			**ft_strsplitstr(char const *s, char *needle);
 int				ft_count_words_str(char const *s, char *needle);

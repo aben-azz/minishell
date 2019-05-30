@@ -6,7 +6,7 @@
 #    By: aben-azz <aben-azz@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2019/02/03 09:24:41 by aben-azz          #+#    #+#              #
-#    Updated: 2019/05/22 15:52:51 by aben-azz         ###   ########.fr        #
+#    Updated: 2019/05/30 23:48:33 by ghamelek         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -33,12 +33,12 @@ _ICYAN			=	\x1b[46m
 _IWHITE			=	\x1b[47m
 _MAGENTA		=	\x1b[35m
 
-MSG				=	Compiling minishell
+MSG				=	Compiling 21sh
 .PHONY: all, $(NAME), clean, fclean, re
 
 NAME = minishell
 cc = gcc
-C_FLAGS = -Wall -Wextra -Werror -g -v
+C_FLAGS = -g -v -Wall -Wextra -Werror
 SRC_NAME = main.c env.c env_builtin.c cd_builtin.c builtins_handler.c
 OBJ_PATH = ./obj/
 LFT_PATH = ./libft/
