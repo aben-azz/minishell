@@ -13,15 +13,65 @@
 #include "minishell.h"
 #include <unistd.h>
 
-int		execute(char **cmd, int dir)
+// void		ft_splitdelxd(char **split)
+// {
+// 	int i;
+//
+// 	i = -1;
+// 	while (split && split[++i])
+// 		ft_strdel(&(split[i]));
+// 	free(split);
+// }
+
+
+int		execute(char **cmd, int dir, int fre)
 {
 	t_stat	f;
 
+	(void)fre;
 	(void)dir;
 	if (lstat(cmd[0], &f) != -1)
 		if (f.st_mode & S_IXUSR)
-				return (execve(cmd[0], cmd, g_env));
+				if (execve(cmd[0], cmd, g_env))
+					return (1);
+	//ft_splitdelxd(++cmd);
 	return (-1);
+}
+
+int exec(char **argv, char **av, int m, char **path)
+{
+	int i;
+	int j;
+
+	(!m && *argv[0] == '\\' && *(argv[0] + 1) == '/') && ++argv[0];
+	if (!m && ~execute(argv, 0, 0))
+		return (1);
+	j = 0;
+	while (path[j] && (i = -1))
+	{
+		while (argv[++i])
+		{
+			if (i)
+			{
+				av[i] = argv[i];
+			}
+			else
+			{
+				ft_strdel(&av[i]);
+				av[i] = ft_strcjoin(path[j++], argv[0], '/');
+			}
+		}
+		if (~execute(av, 1, 1))
+			return (1);
+	}
+
+	ft_printf("minishell: xd command not found: %s\n",
+		(av[0] + ft_lastindexof(av[0], '/') + 1));
+	ft_splitdel(av);
+	ft_splitdel(path);
+	ft_splitdel(argv);
+	exit(0);
+	return (1);
 }
 
 int		exec_valid_command(char **argv, int m)
@@ -29,9 +79,7 @@ int		exec_valid_command(char **argv, int m)
 	pid_t	pid;
 	char	**av;
 	char	**path;
-	int		i;
 	char *leak;
-	int j;
 
 
 	leak = get_env("PATH");
@@ -41,32 +89,13 @@ int		exec_valid_command(char **argv, int m)
 	signal(SIGINT, signal_handler_command);
 	if (!(pid = fork()))
 	{
-		(!m && *argv[0] == '\\' && *(argv[0] + 1) == '/') && ++argv[0];
-		if (!m && ~execute(argv, 0))
-			return (1);
-		j = 0;
-		while (path[j] && (i = -1))
-		{
-			while (argv[++i])
-				if (i)
-					av[i] = argv[i];
-				else
-				{
-					leak = path[j++];
-					av[i] = ft_strcjoin(leak, argv[0], '/');
-					ft_strdel(&leak);
-				}
-			if (~execute(av, 1))
-				return (1);
-		}
-		ft_printf("minishell: xd command not found: %s\n",
-			(av[0] + ft_lastindexof(av[0], '/') + 1));
-		exit(0);
+		exec(argv, av, m, path);
 	}
 	else if (pid < 0)
 		return (ft_printf("Fork failed to create a new process.\n") ? -1 : -1);
 	wait(&pid);
 	ft_splitdel(av);
+
 	ft_splitdel(path);
 	return (1);
 }
@@ -130,6 +159,7 @@ char	*expansion_dollar(char *string)
 	return (replaced);
 }
 
+
 int		handler(char *string)
 {
 	char	**commands;
@@ -145,7 +175,8 @@ int		handler(char *string)
 	while (commands[i])
 	{
 		j = 0;
-		argv = ft_strsplitwhitespace(commands[i++]);
+		if (!(argv = ft_strsplitwhitespace(commands[i++])))
+			return (-1);
 		if (!~find_built(argv))
 		{
 			while (ft_is_space(argv[0][j]))
@@ -156,7 +187,7 @@ int		handler(char *string)
 		}
 		ft_splitdel(argv);
 	}
-	ft_splitdel(commands);
+		ft_splitdel(commands);
 	return (1);
 }
 
@@ -178,5 +209,6 @@ int		main(int ac, char **av, char **env)
 			break ;
 		ft_strdel(&input);
 	}
+	ft_splitdel(g_env);
 	return (0);
 }

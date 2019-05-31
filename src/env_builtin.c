@@ -23,6 +23,7 @@ int		set_env(char *key, char *value)
 	else if ((index = env_len(g_env)))
 		g_env = realloc_env(index + 1, -1);
 	g_env[index] = ft_strjoin(key, value ? tmp : "=");
+	ft_strdel(&tmp);
 	return (0);
 }
 
@@ -65,6 +66,7 @@ int		ft_unsetenv(char **argv)
 		return (ft_printf("setenv: Too many arguments.\n") > 0);
 	if (~(index = get_env_index(argv[1])))
 	{
+		ft_splitdel(g_env);
 		if (!(g_env = realloc_env(index + 1, index)))
 			return (0);
 		return (0);
@@ -82,13 +84,20 @@ void	display_prompt_prefix(void)
 {
 	char *string;
 	char *name;
+	int a;
 
+	a = 1;
 	name = get_env("USER");
-	name || (name = "aben-azz~");
+	if (!name)
+	{
+		name = "aben-azz~";
+		a = 0;
+	}
 	string = NULL;
 	string = getcwd(string, 20);
 	ft_printf(PREFIX);
 	ft_printf(SUFFIX, (string + ft_lastindexof(string, '/') + 1), name);
-	ft_strdel(&name);
+	if (a)
+		ft_strdel(&name);
 	ft_strdel(&string);
 }

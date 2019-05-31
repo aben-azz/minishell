@@ -40,6 +40,7 @@ char	*get_env(char *name)
 {
 	int i;
 
+
 	if (!name)
 		return (NULL);
 	if (~(i = get_env_index(name)))

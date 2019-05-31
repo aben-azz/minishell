@@ -32,15 +32,17 @@ int		find_built(char **argv)
 int		ft_echo(char **argv)
 {
 	int i;
+	int j;
 
 	i = 0;
+	j = 0;
 	while (argv[++i])
 	{
-		while (*argv[i])
+		while (argv[i][j])
 		{
-			if (!~ft_indexof("\"'", *argv[i]))
-				ft_printf("%c", *argv[i]);
-			(void)argv[i]++;
+			if (!~ft_indexof("\"'", argv[i][j]))
+				ft_printf("%c", argv[i][j]);
+			j++;
 		}
 		ft_printf(" ");
 	}

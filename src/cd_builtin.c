@@ -45,13 +45,14 @@ int				change_dir(char *path, int print_path)
 			ft_putstr("cd: not a directory: ");
 		ft_putendl(path);
 	}
+	//ft_strdel(&path);
 	return (1);
 }
 
 static int		has_two_args(char **args)
 {
-	char	*cwd;
-	char	buff[4096 + 1];
+	char	cwd[4096];
+	//char	buff[4096 + 1];
 	char	*tmp;
 
 	tmp = NULL;
@@ -62,16 +63,15 @@ static int		has_two_args(char **args)
 			ft_putendl("cd: too many arguments\n");
 			return (1);
 		}
-		cwd = getcwd(buff, 4096);
+		getcwd(cwd, 4096);
 		if (!(tmp = ft_strreplace(cwd, args[1], args[2])))
 		{
 			ft_putstr("cd: string not in pwd: ");
 			ft_putendl(args[1]);
-			free(tmp);
 			return (1);
 		}
 		change_dir(tmp, 1);
-		free(tmp);
+		ft_strdel(&tmp);
 		return (1);
 	}
 	return (0);
@@ -85,6 +85,7 @@ int				ft_cd(char **argv)
 	if (!argv[1])
 	{
 		change_dir(home_path, 0);
+		ft_strdel(&home_path);
 		return (1);
 	}
 	if (has_two_args(argv))
@@ -94,15 +95,18 @@ int				ft_cd(char **argv)
 		if (ft_strequ(argv[1], "--") || ft_strequ(argv[1], "~"))
 		{
 			change_dir(home_path, 0);
+			ft_strdel(&home_path);
 			return (1);
 		}
 		else if (argv[1][0] == '-' && !argv[1][2])
 		{
 			change_dir(get_env("OLDPWD"), 1);
+			ft_strdel(&home_path);
 			return (1);
 		}
 		change_dir(argv[1], 0);
 	}
+	ft_strdel(&home_path);
 	return (1);
 }
 
