@@ -3,66 +3,40 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: midrissi <midrissi@student.42.fr>          +#+  +:+       +#+        */
+/*   By: aben-azz <aben-azz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2018/10/25 08:54:44 by midrissi          #+#    #+#             */
-/*   Updated: 2019/05/08 07:35:18 by aben-azz         ###   ########.fr       */
+/*   Created: 2018/11/14 08:06:33 by aben-azz          #+#    #+#             */
+/*   Updated: 2019/05/31 04:47:56 by aben-azz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-static	int		get_line_length(char *s, char separator)
+int				get_next_line(int const fd, char **line, char separator)
 {
-	int i;
+	static t_gnl	g;
 
-	i = 0;
-	while (s[i] && s[i] != separator)
-		i++;
-	return (i);
-}
-
-static	char	*read_line(char *s, int fd, int *ret, char separator)
-{
-	char	buffer[BUFF_SIZE + 1];
-	char	*tmp;
-
-	while ((*ret = read(fd, buffer, BUFF_SIZE)) > 0)
+	if (fd < 0 || fd > MAX || !line || (!g.s[fd] && !(g.s[fd] = ft_strnew(0))))
+		return (-1);
+	g.i = 0;
+	while (g.s[fd] && (g.i_read = read(fd, g.buff, BUFF_SIZE)) > 0)
 	{
-		buffer[*ret] = '\0';
-		tmp = s;
-		if (!(s = ft_strjoin(s, buffer)))
-		{
-			ft_strdel(&tmp);
-			*ret = -1;
-			return (NULL);
-		}
-		ft_strdel(&tmp);
-		if (ft_strchr(buffer, separator))
+		g.buff[g.i_read] = '\0';
+		g.ptr_leak = g.s[fd];
+		g.s[fd] = ft_strjoin(g.s[fd], g.buff);
+		ft_strdel(&g.ptr_leak);
+		if (ft_strchr(g.buff, separator))
 			break ;
 	}
-	return (s);
-}
-
-int				get_next_line(const int fd, char **line, char separator)
-{
-	static char	*s[FD_MAX + 1];
-	int			ret;
-	int			len;
-
-	if (!line || fd < 0 || fd >= FD_MAX || (!s[fd] && !(s[fd] = ft_strnew(0))))
-		return (-1);
-	s[fd] = read_line(s[fd], fd, &ret, separator);
-	if (s[fd] && ft_strlen(s[fd]))
+	if (g.s[fd] && g.i_read >= 0 && g.s[fd][g.i])
 	{
-		len = get_line_length(s[fd], separator);
-		if (!(*line = ft_strsub(s[fd], 0, len)))
-			ft_strdel(&s[fd]);
-		s[FD_MAX] = s[fd];
-		s[fd] = ft_strsub(s[fd], len + 1, ft_strlen(s[fd]) - len);
-		ft_strdel(&s[FD_MAX]);
-		return (!s[fd] ? -1 : 1);
+		while (g.s[fd][g.i] && g.s[fd][g.i] != separator)
+			g.i++;
+		*line = !g.i ? ft_strdup("") : ft_strsub(g.s[fd], 0, g.i);
+		g.ptr_leak = g.s[fd];
+		g.s[fd] = ft_strdup(&g.s[fd][g.i + (g.s[fd][g.i] == separator)]);
+		ft_strdel(&g.ptr_leak);
+		return ((!line || !g.s[fd]) ? -1 : 1);
 	}
-	ft_strdel(&s[fd]);
-	return (!ret ? 0 : -1);
+	return ((g.i_read || !g.s[fd]) ? -1 : 0);
 }

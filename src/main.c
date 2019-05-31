@@ -6,7 +6,7 @@
 /*   By: aben-azz <aben-azz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/12/08 08:51:22 by aben-azz          #+#    #+#             */
-/*   Updated: 2019/05/31 00:08:03 by ghamelek         ###   ########.fr       */
+/*   Updated: 2019/05/31 04:56:26 by aben-azz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,7 +100,6 @@ int		exec_valid_command(char **argv, int m)
 	return (1);
 }
 
-
 int		is_expansion_printable(char *s, int dollar_index, int i)
 {
 	return (!((s[dollar_index - 1] && s[dollar_index - 1] == '\'') &&
@@ -123,6 +122,7 @@ char	*get_expansion(char *string, char *act_env, int length)
 		replaced = ft_strreplace(string, act_env, "0");
 	else
 		replaced = ft_strreplace(string, act_env, "");
+	ft_strdel(&string);
 	return (replaced);
 }
 
@@ -137,7 +137,8 @@ char	*expansion_dollar(char *string)
 	if (!string || (string && !(replaced = ft_strdup(string))))
 	{
 		ft_strdel(&replaced);
-	return (NULL);
+		ft_strdel(&string);
+		return (NULL);
 	}
 	dollar_index = ft_indexof(string, '$');
 	if (!~dollar_index)
@@ -155,10 +156,11 @@ char	*expansion_dollar(char *string)
 	{
 		act_env = ft_substr(string, dollar_index, i);
 		replaced = get_expansion(string, act_env, length);
+		ft_strdel(&act_env);
 	}
+	ft_strdel(&string);
 	return (replaced);
 }
-
 
 int		handler(char *string)
 {
@@ -171,7 +173,9 @@ int		handler(char *string)
 	i = 0;
 	if ((test = expansion_dollar(string)))
 		string = test;
+	ft_strdel(&test);
 	commands = ft_strsplit(string, ';');
+	ft_strdel(&string);
 	while (commands[i])
 	{
 		j = 0;
@@ -187,7 +191,7 @@ int		handler(char *string)
 		}
 		ft_splitdel(argv);
 	}
-		ft_splitdel(commands);
+	ft_splitdel(commands);
 	return (1);
 }
 
@@ -204,7 +208,12 @@ int		main(int ac, char **av, char **env)
 	{
 		display_prompt_prefix();
 		signal(SIGINT, signal_handler_empty);
-		((ret = get_next_line(0, &input, '\n')) > 0) && handler(input);
+		input = NULL;
+		if ((ret = get_next_line(0, &input, '\n')) > 0)
+		{
+			handler(input);
+			ft_strdel(&input);
+		}
 		if (ret == -1)
 			break ;
 		ft_strdel(&input);

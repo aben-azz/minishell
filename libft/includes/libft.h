@@ -6,7 +6,7 @@
 /*   By: midrissi <midrissi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/10/04 13:56:36 by midrissi          #+#    #+#             */
-/*   Updated: 2019/05/22 14:01:44 by aben-azz         ###   ########.fr       */
+/*   Updated: 2019/05/31 04:44:32 by aben-azz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,9 +26,18 @@
 # define LU	5
 # define Z	6
 # define J  7
+# define MAX OPEN_MAX
 # define BUFF_SIZE 32
 # define FD_MAX OPEN_MAX
 
+typedef struct	s_gnl
+{
+	int			i;
+	int			i_read;
+	char		buff[BUFF_SIZE + 1];
+	char		*ptr_leak;
+	char		*s[MAX];
+}				t_gnl;
 int				get_next_line(int fd, char **line, char separator);
 void			*ft_memset(void *b, int c, size_t len);
 void			ft_bzero(void *s, size_t n);

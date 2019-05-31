@@ -6,7 +6,7 @@
 /*   By: aben-azz <aben-azz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/28 05:59:29 by aben-azz          #+#    #+#             */
-/*   Updated: 2019/04/21 11:26:18 by aben-azz         ###   ########.fr       */
+/*   Updated: 2019/05/31 04:27:25 by aben-azz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,7 +100,9 @@ int				ft_cd(char **argv)
 		}
 		else if (argv[1][0] == '-' && !argv[1][2])
 		{
-			change_dir(get_env("OLDPWD"), 1);
+			ft_strdel(&home_path);
+			home_path = get_env("OLDPWD");
+			change_dir(home_path, 1);
 			ft_strdel(&home_path);
 			return (1);
 		}
@@ -130,7 +132,7 @@ int		quick_cd(char **cmd)
 	if (!ft_strcmp(s, ".."))
 		return (change_dir(ft_strsub(buff, 0, ft_lastindexof(buff, '/')), 0));
 	else if (!ft_strcmp(s, "~"))
-		return (change_dir(get_env("HOME"), 0));
+		return (change_dir(NULL, 0));
 	else if (lstat(cmd[0], &f) != -1)
 	{
 		if (f.st_mode & S_IFDIR)

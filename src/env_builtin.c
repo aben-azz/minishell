@@ -6,7 +6,7 @@
 /*   By: aben-azz <aben-azz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/28 04:41:17 by aben-azz          #+#    #+#             */
-/*   Updated: 2019/05/31 00:03:30 by ghamelek         ###   ########.fr       */
+/*   Updated: 2019/05/31 04:34:28 by aben-azz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,15 +71,19 @@ int		ft_unsetenv(char **argv)
 			return (0);
 		return (0);
 	}
+	ft_splitdel(g_env);
 	return (0);
 }
 
 int		ft_exit(char **argv)
 {
 	(void)argv;
+	ft_splitdel(g_env);
+	ft_splitdel(argv);
 	exit(0);
 	return (0);
 }
+
 void	display_prompt_prefix(void)
 {
 	char *string;

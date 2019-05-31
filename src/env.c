@@ -6,7 +6,7 @@
 /*   By: aben-azz <aben-azz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/25 06:57:16 by aben-azz          #+#    #+#             */
-/*   Updated: 2019/05/31 00:02:51 by ghamelek         ###   ########.fr       */
+/*   Updated: 2019/05/31 04:23:44 by aben-azz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,20 +40,19 @@ char	*get_env(char *name)
 {
 	int i;
 
-
 	if (!name)
 		return (NULL);
 	if (~(i = get_env_index(name)))
 		return (ft_strsub(g_env[i], ft_indexof(g_env[i], '=') + 1,
-			ft_strlen(g_env[i])));
+				ft_strlen(g_env[i])));
 	else
 		return (NULL);
 }
 
 int		get_env_index(char *name)
 {
-	int i;
-	char *str;
+	int		i;
+	char	*str;
 
 	i = -1;
 	if (!name)
@@ -66,9 +65,9 @@ int		get_env_index(char *name)
 			ft_strdel(&str);
 			return (i);
 		}
-			ft_strdel(&str);
+		ft_strdel(&str);
 	}
-			return (-1);
+	return (-1);
 }
 
 void	signal_handler_empty(int sig)
