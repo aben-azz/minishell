@@ -6,7 +6,7 @@
 /*   By: aben-azz <aben-azz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/28 04:41:17 by aben-azz          #+#    #+#             */
-/*   Updated: 2019/05/31 04:34:28 by aben-azz         ###   ########.fr       */
+/*   Updated: 2019/06/10 13:51:34 by aben-azz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,42 +66,16 @@ int		ft_unsetenv(char **argv)
 		return (ft_printf("setenv: Too many arguments.\n") > 0);
 	if (~(index = get_env_index(argv[1])))
 	{
-		ft_splitdel(g_env);
-		if (!(g_env = realloc_env(index + 1, index)))
+		if (!(g_env = realloc_env(env_len(g_env) - 1, index)))
 			return (0);
 		return (0);
 	}
-	ft_splitdel(g_env);
 	return (0);
 }
 
 int		ft_exit(char **argv)
 {
-	(void)argv;
-	ft_splitdel(g_env);
 	ft_splitdel(argv);
 	exit(0);
 	return (0);
-}
-
-void	display_prompt_prefix(void)
-{
-	char *string;
-	char *name;
-	int a;
-
-	a = 1;
-	name = get_env("USER");
-	if (!name)
-	{
-		name = "aben-azz~";
-		a = 0;
-	}
-	string = NULL;
-	string = getcwd(string, 20);
-	ft_printf(PREFIX);
-	ft_printf(SUFFIX, (string + ft_lastindexof(string, '/') + 1), name);
-	if (a)
-		ft_strdel(&name);
-	ft_strdel(&string);
 }

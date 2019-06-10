@@ -6,7 +6,7 @@
 /*   By: aben-azz <aben-azz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/25 06:56:10 by aben-azz          #+#    #+#             */
-/*   Updated: 2019/05/31 04:35:08 by aben-azz         ###   ########.fr       */
+/*   Updated: 2019/06/10 11:22:00 by aben-azz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,16 +34,18 @@ int		ft_echo(char **argv)
 	int i;
 	int j;
 
-	i = 0;
+	i = 1;
 	j = 0;
-	while (argv[++i])
+	while (argv[i])
 	{
+		j = 0;
 		while (argv[i][j])
 		{
 			if (!~ft_indexof("\"'", argv[i][j]))
 				ft_printf("%c", argv[i][j]);
 			j++;
 		}
+		i++;
 		ft_printf(" ");
 	}
 	ft_printf(" \n");

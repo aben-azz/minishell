@@ -6,7 +6,7 @@
 /*   By: midrissi <midrissi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/10/04 13:56:36 by midrissi          #+#    #+#             */
-/*   Updated: 2019/05/31 04:44:32 by aben-azz         ###   ########.fr       */
+/*   Updated: 2019/06/10 10:21:58 by aben-azz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,14 +18,18 @@
 # include <string.h>
 # include <limits.h>
 # include <stdarg.h>
-# define CONV "diouxXcspfDOUb%"
-# define H 1
-# define HH	2
-# define L	3
-# define LL	4
-# define LU	5
-# define Z	6
-# define J  7
+# define TYPES    "cspPfFdDiIoOuUXxbvr%"
+# define LENGTH   "lhLzj"
+# define HASH    (1 << 0)
+# define ZERO    (1 << 1)
+# define SUB     (1 << 2)
+# define L_      (1 << 1) + 1
+# define LL_     (1 << 1)
+# define H_      (1 << 2) + 1
+# define HH_     (1 << 2)
+# define LU_     (1 << 3) + 1
+# define Z_      (1 << 4) + 1
+# define J_      (1 << 5) + 1
 # define MAX OPEN_MAX
 # define BUFF_SIZE 32
 # define FD_MAX OPEN_MAX
@@ -89,6 +93,8 @@ void			ft_putchar(char c);
 void			ft_putstr(char const *s);
 void			ft_putendl(char const *s);
 void			ft_putnbr(int n);
+int				ft_min(int n, int b);
+int				ft_max(int n, int b);
 void			ft_putchar_fd(char c, int fd);
 void			ft_nputchar(char c, int n);
 void			ft_putstr_fd(char const *s, int fd);
@@ -101,7 +107,7 @@ char			*ft_utoa_base(uintmax_t nb,
 int				ft_count_char(char c, char *str);
 int				ft_count_words(char const *s, char c);
 double			interpolate(double start, double end, double interpolat);
-
+int				ft_counti(char *string, char c, int i);
 typedef struct	s_list
 {
 	void			*content;
@@ -118,37 +124,31 @@ void			ft_lstadd(t_list **alst, t_list *new);
 int				ft_lstpushback(t_list **begin, t_list *new);
 void			ft_lstrev(t_list **alst);
 int				ft_lstdestroy(t_list **lst);
-
-typedef struct	s_format
+int	ft_repeat_char(int fd, char c, int n);
+typedef struct	s_fmt
 {
-	char			conversion;
-	int				width;
-	int				precision;
-	short			modifier;
-	char			signe;
-	char			minus;
-	char			zero;
-	char			prefixe;
-	int				base;
-	int				(*handler)(struct s_format *fmt, va_list ap);
-}				t_format;
-
-int				ft_printf(const char *restrict format, ...);
-t_format		*create_format(char *str, va_list ap);
-int				parse_format(char *str, va_list ap);
-int				check_conversion(char **str);
-void			set_conversion(char *str, t_format *fmt);
-int				get_modifier(char *str, t_format *fmt);
-int				get_precision(char *str, t_format *fmt, va_list ap);
-int				get_width(char *str, va_list ap, t_format *fmt);
-void			set_flags(char *str, t_format *fmt);
-int				handle_char(t_format *fmt, va_list ap);
-int				handle_numbers(t_format *fmt, va_list ap);
-int				handle_str(t_format *fmt, va_list ap);
-intmax_t		get_signed(t_format *fmt, va_list ap);
-uintmax_t		get_unsigned(t_format *fmt, va_list ap);
-int				print_numbers(t_format *fmt, char *str, int len);
-char			*get_string(t_format *fmt, va_list ap);
+	int				prec;
+	int				length;
+	int				type;
+	int				field;
+	int				opt;
+	int				signe;
+	int				prefixe;
+}				t_fmt;
+typedef struct	s_ype
+{
+	int				type;
+	int				(*function)(int fd, va_list list, t_fmt *fmt);
+}				t_ype;
+int				handle_char(int fd, va_list list, t_fmt *fmt);
+int				handle_string(int fd, va_list list, t_fmt *fmt);
+int				handle_array(int fd, va_list list, t_fmt *fmt);
+int				print_numbers(int fd, t_fmt *fmt, char *str, int len);
+int				handle_number(int fd, va_list ap, t_fmt *fmt);
+t_fmt			*get_options(char *s, va_list ap);
+char			*get_s(t_fmt *fmt, va_list ap);
+int				ft_printf(const char *format, ...);
+int				ft_dprintf(int fd, const char *format, ...);
 intmax_t		ft_abs(intmax_t nb);
 int				ft_get_color(int color1, int color2, double percentage);
 double			ft_percent(int start, int end, int curr);

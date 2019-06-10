@@ -6,7 +6,7 @@
 /*   By: aben-azz <aben-azz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/28 06:41:49 by aben-azz          #+#    #+#             */
-/*   Updated: 2019/03/28 06:42:40 by aben-azz         ###   ########.fr       */
+/*   Updated: 2019/06/10 13:09:13 by aben-azz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,5 +38,8 @@ char	*ft_strreplace(char *orig, char *rep, char *with)
 		tmp = ft_strcpy(tmp, with) + len[1];
 		orig += len[2] + len[0];
 	}
-	return (ft_strjoin(result, orig));
+	char *old;
+	old = ft_strjoin(result, orig);
+	ft_strdel(&result);
+	return (old);
 }

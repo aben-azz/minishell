@@ -6,7 +6,7 @@
 #    By: midrissi <midrissi@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/10/09 12:43:35 by midrissi          #+#    #+#              #
-#    Updated: 2019/05/22 14:03:31 by aben-azz         ###   ########.fr        #
+#    Updated: 2019/06/10 10:32:27 by aben-azz         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -27,13 +27,12 @@ ft_toupper.c ft_strmapi.c ft_strncat.c ft_strncmp.c \
 ft_strncpy.c ft_strnequ.c ft_strnew.c ft_strnstr.c \
 ft_strrchr.c ft_tolower.c get_next_line.c ft_itoa_base.c \
 ft_nputchar.c ft_ftoa.c ft_utoa_base.c ft_count_char.c \
-ft_lstpushback.c ft_lstrev.c ft_lstdestroy.c ft_count_words.c ft_printf.c \
-numbers.c format_geters.c handlers.c ft_splitdel.c \
+ft_lstpushback.c ft_lstrev.c ft_lstdestroy.c ft_count_words.c \
+handle_numbers.c geters.c handlers.c ft_splitdel.c \
 ft_abs.c ft_get_color.c ft_percent.c ft_interpolate.c ft_split_count.c \
 ft_strcjoin.c ft_strsplitstr.c ft_count_words_str.c ft_lastindexof.c \
 ft_indexof.c ft_levenshtein.c ft_substr.c ft_strreplace.c ft_is_space.c \
-ft_strsplitwhitespace.c
-
+ft_strsplitwhitespace.c ft_printf.c ft_counti.c ft_max.c ft_repeat_char.c
 _END			=	\x1b[0m
 _BOLD			=	\x1b[1m
 _UNDER			=	\x1b[4m
@@ -57,7 +56,7 @@ _IWHITE			=	\x1b[47m
 MSG					= Compiling the libft:
 
 OBJPATH			= obj/
-SRCPATH			=	srcs/
+SRCPATH			=	src/
 
 SRCS := $(SRC:%=$(SRCPATH)%)
 OBJ := $(SRC:%.c=$(OBJPATH)%.o)

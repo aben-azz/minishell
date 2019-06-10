@@ -3,46 +3,44 @@
 /*                                                        :::      ::::::::   */
 /*   ft_printf.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: midrissi <midrissi@student.42.fr>          +#+  +:+       +#+        */
+/*   By: aben-azz <aben-azz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2018/11/27 12:10:48 by midrissi          #+#    #+#             */
-/*   Updated: 2019/02/20 06:17:14 by midrissi         ###   ########.fr       */
+/*   Created: 2018/12/08 08:43:19 by aben-azz          #+#    #+#             */
+/*   Updated: 2019/06/10 10:31:51 by aben-azz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-void		set_conversion(char *str, t_format *fmt)
-{
-	fmt->modifier = 0;
-	while (*str)
-	{
-		if (ft_strchr(CONV, *str))
-		{
-			fmt->conversion = *str;
-			if (ft_strchr("DOU", fmt->conversion))
-			{
-				fmt->modifier = L;
-				fmt->conversion = ft_tolower(fmt->conversion);
-			}
-			fmt->base = 10;
-			if (fmt->conversion == 'x' || fmt->conversion == 'X'
-				|| fmt->conversion == 'p')
-				fmt->base = 16;
-			fmt->base = fmt->conversion == 'o' ? 8 : fmt->base;
-			fmt->base = fmt->conversion == 'b' ? 2 : fmt->base;
-			return ;
-		}
-		str++;
-	}
-	fmt->conversion = 0;
-}
+static t_ype g_type[] = {
+	{'c', &handle_char},
+	{'%', &handle_char},
+	{'s', &handle_string},
+	{'p', &handle_number},
+	{'P', &handle_number},
+	{'f', &handle_number},
+	{'F', &handle_number},
+	{'d', &handle_number},
+	{'D', &handle_number},
+	{'i', &handle_number},
+	{'I', &handle_number},
+	{'o', &handle_number},
+	{'O', &handle_number},
+	{'u', &handle_number},
+	{'U', &handle_number},
+	{'X', &handle_number},
+	{'x', &handle_number},
+	{'b', &handle_number},
+	{'B', &handle_number},
+	{'v', &handle_array},
+	{'r', &handle_array}
+};
 
-int			check_conversion(char **str)
+static int		check_flag(char **str)
 {
-	while (**str && !ft_strchr(CONV, **str))
+	while (**str && !~ft_indexof(TYPES, **str))
 	{
-		if (!ft_strchr("-+ #0lLhzj*.", **str) && !ft_isdigit(**str))
+		if (!~ft_indexof("-+ #0lLhzj*.", **str) && !ft_isdigit(**str))
 			return (0);
 		(*str)++;
 	}
@@ -52,61 +50,53 @@ int			check_conversion(char **str)
 	return (1);
 }
 
-t_format	*create_format(char *str, va_list ap)
+static int		parse(int fd, char *str, va_list ap)
 {
-	t_format	*fmt;
+	int		j;
+	t_fmt	*fmt;
+	int		l;
 
-	if (!(fmt = (t_format *)malloc(sizeof(t_format))))
-		exit(1);
-	fmt->minus = 0;
-	set_conversion(str, fmt);
-	fmt->width = get_width(str, ap, fmt);
-	fmt->precision = get_precision(str, fmt, ap);
-	if (!fmt->modifier)
-		fmt->modifier = get_modifier(str, fmt);
-	set_flags(str, fmt);
-	if (ft_strchr("diouxXbp", fmt->conversion) && fmt->precision != -1)
-		fmt->zero = 0;
-	if (fmt->conversion == 'c' || fmt->conversion == '%')
-		fmt->handler = &handle_char;
-	else if (fmt->conversion == 's')
-		fmt->handler = &handle_str;
-	else
-		fmt->handler = &handle_numbers;
-	return (fmt);
-}
-
-int			parse_format(char *str, va_list ap)
-{
-	t_format	*fmt;
-	int			ret;
-
-	ret = 0;
-	while (*str)
+	l = 0;
+	while (*str && (j = -1))
 	{
 		if (*str == '%')
 		{
-			fmt = create_format(++str, ap);
-			if (check_conversion(&str))
-				ret += fmt->handler(fmt, ap);
-			free(fmt);
+			fmt = get_options(++str, ap);
+			if (check_flag(&str))
+			{
+				while (g_type[++j].type)
+					if (g_type[j].type == fmt->type)
+					{
+						l += g_type[j].function(fd, ap, fmt);
+						break ;
+					}
+				free(fmt);
+			}
 		}
 		else
-		{
-			write(1, str++, 1);
-			ret++;
-		}
+			write(1, str++, 1) && (l++);
 	}
-	return (ret);
+	return (l);
 }
 
-int			ft_printf(const char *restrict format, ...)
+int				ft_dprintf(int fd, const char *restrict format, ...)
 {
-	va_list		ap;
-	int			ret;
+	int		length;
+	va_list	ap;
 
 	va_start(ap, format);
-	ret = parse_format((char *)format, ap);
+	length = parse(fd, (char *)format, ap);
 	va_end(ap);
-	return (ret);
+	return (length);
+}
+
+int				ft_printf(const char *restrict format, ...)
+{
+	int		length;
+	va_list	ap;
+
+	va_start(ap, format);
+	length = parse(1, (char*)format, ap);
+	va_end(ap);
+	return (length);
 }

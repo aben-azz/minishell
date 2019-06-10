@@ -6,39 +6,14 @@
 /*   By: aben-azz <aben-azz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/12/08 08:51:22 by aben-azz          #+#    #+#             */
-/*   Updated: 2019/05/31 04:56:26 by aben-azz         ###   ########.fr       */
+/*   Updated: 2019/06/10 13:51:23 by aben-azz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 #include <unistd.h>
 
-// void		ft_splitdelxd(char **split)
-// {
-// 	int i;
-//
-// 	i = -1;
-// 	while (split && split[++i])
-// 		ft_strdel(&(split[i]));
-// 	free(split);
-// }
-
-
-int		execute(char **cmd, int dir, int fre)
-{
-	t_stat	f;
-
-	(void)fre;
-	(void)dir;
-	if (lstat(cmd[0], &f) != -1)
-		if (f.st_mode & S_IXUSR)
-				if (execve(cmd[0], cmd, g_env))
-					return (1);
-	//ft_splitdelxd(++cmd);
-	return (-1);
-}
-
-int exec(char **argv, char **av, int m, char **path)
+int		exec(char **argv, char **av, int m, char **path)
 {
 	int i;
 	int j;
@@ -52,9 +27,7 @@ int exec(char **argv, char **av, int m, char **path)
 		while (argv[++i])
 		{
 			if (i)
-			{
 				av[i] = argv[i];
-			}
 			else
 			{
 				ft_strdel(&av[i]);
@@ -64,13 +37,7 @@ int exec(char **argv, char **av, int m, char **path)
 		if (~execute(av, 1, 1))
 			return (1);
 	}
-
-	ft_printf("minishell: xd command not found: %s\n",
-		(av[0] + ft_lastindexof(av[0], '/') + 1));
-	ft_splitdel(av);
-	ft_splitdel(path);
-	ft_splitdel(argv);
-	exit(0);
+	ft_error((av[0] + ft_lastindexof(av[0], '/') + 1), path, av);
 	return (1);
 }
 
@@ -79,8 +46,7 @@ int		exec_valid_command(char **argv, int m)
 	pid_t	pid;
 	char	**av;
 	char	**path;
-	char *leak;
-
+	char	*leak;
 
 	leak = get_env("PATH");
 	path = ft_strsplit(leak, ':');
@@ -95,103 +61,41 @@ int		exec_valid_command(char **argv, int m)
 		return (ft_printf("Fork failed to create a new process.\n") ? -1 : -1);
 	wait(&pid);
 	ft_splitdel(av);
-
 	ft_splitdel(path);
 	return (1);
 }
 
-int		is_expansion_printable(char *s, int dollar_index, int i)
+void	exec_handler(char **av, int *ij)
 {
-	return (!((s[dollar_index - 1] && s[dollar_index - 1] == '\'') &&
-			(s[i] && s[i] == '\'')));
+	if (!~find_built(av))
+	{
+		while (ft_is_space(av[0][ij[1]]))
+			ij[1]++;
+		(!~quick_cd(av)) && exec_valid_command(av, !(av[0][ij[1]] == '/' ||
+				(av[0][ij[1]] == '\\' && av[0][ij[1] + 1] == '/')));
+	}
 }
 
-char	*get_expansion(char *string, char *act_env, int length)
+int		handler(char **string)
 {
-	char	*replaced;
-
-	if (get_env(act_env + 1 + length))
-	{
-		if (!length)
-			replaced = ft_strreplace(string, act_env, get_env(act_env + 1));
-		else
-			replaced = ft_strreplace(string, act_env,
-					ft_itoa((int)ft_strlen(get_env(act_env + 2))));
-	}
-	else if (length)
-		replaced = ft_strreplace(string, act_env, "0");
-	else
-		replaced = ft_strreplace(string, act_env, "");
-	ft_strdel(&string);
-	return (replaced);
-}
-
-char	*expansion_dollar(char *string)
-{
-	int		i;
-	int		length;
-	int		dollar_index;
-	char	*replaced;
-	char	*act_env;
-
-	if (!string || (string && !(replaced = ft_strdup(string))))
-	{
-		ft_strdel(&replaced);
-		ft_strdel(&string);
-		return (NULL);
-	}
-	dollar_index = ft_indexof(string, '$');
-	if (!~dollar_index)
-	{
-		ft_strdel(&replaced);
-		return (string);
-	}
-	i = dollar_index + 1;
-	length = 0;
-	(string[i] == '#') && ((length = 1) && (i++));
-	while (i < (int)ft_strlen(string) && string[i] && (string[i] == '_' ||
-		ft_isalpha(string[i])))
-		i++;
-	if (is_expansion_printable(string, dollar_index, i))
-	{
-		act_env = ft_substr(string, dollar_index, i);
-		replaced = get_expansion(string, act_env, length);
-		ft_strdel(&act_env);
-	}
-	ft_strdel(&string);
-	return (replaced);
-}
-
-int		handler(char *string)
-{
-	char	**commands;
-	char	**argv;
+	char	**cmd;
+	char	**av;
 	char	*test;
-	int i;
-	int j;
+	int		ij[2];
 
-	i = 0;
-	if ((test = expansion_dollar(string)))
-		string = test;
-	ft_strdel(&test);
-	commands = ft_strsplit(string, ';');
-	ft_strdel(&string);
-	while (commands[i])
+	ij[0] = 0;
+	test = expansion_dollar(*string);
+	cmd = ft_strsplit(test, ';');
+	while (cmd[ij[0]])
 	{
-		j = 0;
-		if (!(argv = ft_strsplitwhitespace(commands[i++])))
+		ij[1] = 0;
+		if (!(av = ft_strsplitwhitespace(cmd[ij[0]++])) || !ft_split_count(av))
 			return (-1);
-		if (!~find_built(argv))
-		{
-			while (ft_is_space(argv[0][j]))
-				j++;
-			if (!~quick_cd(argv))
-				exec_valid_command(argv, !(argv[0][j] == '/' ||
-					(argv[0][j] == '\\' && argv[0][j + 1] == '/')));
-		}
-		ft_splitdel(argv);
+		exec_handler(av, ij);
+		ft_splitdel(av);
 	}
-	ft_splitdel(commands);
+	ft_splitdel(cmd);
+	ft_strdel(&test);
 	return (1);
 }
 
@@ -208,15 +112,13 @@ int		main(int ac, char **av, char **env)
 	{
 		display_prompt_prefix();
 		signal(SIGINT, signal_handler_empty);
-		input = NULL;
 		if ((ret = get_next_line(0, &input, '\n')) > 0)
 		{
-			handler(input);
-			ft_strdel(&input);
+			handler(&input);
 		}
+		ft_strdel(&input);
 		if (ret == -1)
 			break ;
-		ft_strdel(&input);
 	}
 	ft_splitdel(g_env);
 	return (0);

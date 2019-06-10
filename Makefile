@@ -6,7 +6,7 @@
 #    By: aben-azz <aben-azz@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2019/02/03 09:24:41 by aben-azz          #+#    #+#              #
-#    Updated: 2019/05/31 04:56:56 by aben-azz         ###   ########.fr        #
+#    Updated: 2019/06/10 11:23:55 by aben-azz         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -39,7 +39,8 @@ MSG				=	Compiling 21sh
 NAME = minishell
 cc = gcc
 C_FLAGS = -g -v -Wall -Wextra -Werror
-SRC_NAME = main.c env.c env_builtin.c cd_builtin.c builtins_handler.c
+SRC_NAME = main.c env.c env_builtin.c cd_builtin.c builtins_handler.c utils.c \
+expansion.c
 OBJ_PATH = ./obj/
 LFT_PATH = ./libft/
 LFT_NAME = libft.a

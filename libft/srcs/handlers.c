@@ -3,87 +3,107 @@
 /*                                                        :::      ::::::::   */
 /*   handlers.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: midrissi <midrissi@student.42.fr>          +#+  +:+       +#+        */
+/*   By: aben-azz <aben-azz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2019/02/08 05:11:05 by midrissi          #+#    #+#             */
-/*   Updated: 2019/02/20 06:16:54 by midrissi         ###   ########.fr       */
+/*   Created: 2019/02/27 09:27:44 by aben-azz          #+#    #+#             */
+/*   Updated: 2019/06/10 10:17:19 by aben-azz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-int		handle_char(t_format *fmt, va_list ap)
+int			handle_char(int fd, va_list list, t_fmt *fmt)
 {
 	char	c;
 
-	if (fmt->conversion == 'c')
-		c = (char)va_arg(ap, int);
-	else
-		c = '%';
-	if (fmt->minus)
+	c = (fmt->type == 'c') ? (char)va_arg(list, int) : '%';
+	if (fmt->opt & SUB)
 	{
-		ft_putchar(c);
-		ft_nputchar(' ', fmt->width - 1);
+		ft_putchar_fd(c, fd);
+		ft_repeat_char(fd, ' ', fmt->field - 1);
 	}
 	else
 	{
-		ft_nputchar(fmt->zero ? '0' : ' ', fmt->width - 1);
-		ft_putchar(c);
+		ft_repeat_char(fd, fmt->opt & ZERO ? '0' : ' ', fmt->field - 1);
+		ft_putchar_fd(c, fd);
 	}
-	return (fmt->width > 0 ? fmt->width : 1);
+	return (fmt->field > 0 ? fmt->field : 1);
 }
 
-int		handle_str(t_format *fmt, va_list ap)
+int			handle_string(int fd, va_list list, t_fmt *fmt)
 {
 	char	*str;
 	int		ret;
 
-	str = va_arg(ap, char*);
+	str = va_arg(list, char*);
 	str = !str ? "(null)" : str;
-	if (fmt->precision >= 0 && ((size_t)fmt->precision < ft_strlen(str)))
+	if (fmt->prec >= 0 && ((size_t)fmt->prec < ft_strlen(str)))
 	{
-		str = ft_strsub(str, 0, (size_t)fmt->precision);
-		fmt->precision = -5;
+		str = ft_strsub(str, 0, (size_t)fmt->prec);
+		fmt->prec = -5;
 	}
 	str == NULL ? exit(1) : NULL;
 	ret = ft_strlen(str);
-	if (fmt->minus)
+	if (fmt->opt & SUB)
 	{
-		ft_putstr(str);
-		ft_nputchar(' ', fmt->width - ret);
+		ft_putstr_fd(str, fd);
+		ft_repeat_char(fd, ' ', fmt->field - ret);
 	}
 	else
 	{
-		ft_nputchar(fmt->zero ? '0' : ' ', fmt->width - ret);
-		ft_putstr(str);
+		ft_repeat_char(fd, fmt->opt & ZERO ? '0' : ' ', fmt->field - ret);
+		ft_putstr_fd(str, fd);
 	}
-	if (fmt->precision == -5)
-		ft_strdel(&str);
-	return (ret < fmt->width ? fmt->width : ret);
+	(fmt->prec == -5) ? ft_strdel(&str) : 0;
+	return (ret < fmt->field ? fmt->field : ret);
 }
 
-int		handle_numbers(t_format *fmt, va_list ap)
+int			handle_array(int fd, va_list list, t_fmt *fmt)
+{
+	int		*array;
+	char	**string;
+	int		i;
+	char	*separator;
+	int		number;
+
+	array = (fmt->type == 'v') ? va_arg(list, int *) : NULL;
+	string = (fmt->type == 'r') ? va_arg(list, char **) : NULL;
+	(void)string;
+	(void)array;
+	number = va_arg(list, int);
+	i = 0;
+	separator = va_arg(list, char *);
+	while (i < number)
+	{
+		fmt->type == 'v' ? ft_putnbr_fd(array[i++], fd) :
+			ft_putstr_fd(string[i++], fd);
+		i != number ? ft_putstr_fd(separator, fd) : 0;
+	}
+	return (0);
+}
+
+int			handle_number(int fd, va_list list, t_fmt *fmt)
 {
 	char		*str;
 	int			len;
 
-	str = get_string(fmt, ap);
-	if (!fmt->precision && str[0] == '0' && fmt->conversion != 'f')
+	(!~ft_indexof("fF", fmt->type) && ~fmt->prec) && (fmt->opt &= ~(ZERO));
+	(~ft_indexof("fF", fmt->type)) && (fmt->prec = !~fmt->prec ? 6 : fmt->prec);
+	str = get_s(fmt, list);
+	if (!fmt->prec && str[0] == '0' && !~ft_indexof("fF", fmt->type))
 	{
-		if (fmt->conversion == 'x' || fmt->conversion == 'X')
-			fmt->prefixe = 0;
+		(~ft_indexof("Xx", fmt->type)) && (fmt->prefixe = 0);
 		str[0] = '\0';
 	}
-	if (fmt->conversion != 'p')
+	if (!~ft_indexof("Pp", fmt->type))
 		fmt->prefixe = *str == '0' ? 0 : fmt->prefixe;
-	if (*str == '-')
-		fmt->signe = *(str++);
-	fmt->precision -= ft_strlen(str);
-	fmt->precision = fmt->prefixe == 1 ? fmt->precision - 1 : fmt->precision;
-	fmt->precision = fmt->precision < 0 ? 0 : fmt->precision;
-	len = fmt->width - ft_strlen(str) - (fmt->signe ? 1 : 0) - fmt->precision;
+	(*str == '-') && (fmt->signe = *(str++));
+	fmt->prec -= ft_strlen(str);
+	fmt->prec = fmt->prefixe == 1 ? fmt->prec - 1 : fmt->prec;
+	fmt->prec = fmt->prec < 0 ? 0 : fmt->prec;
+	len = fmt->field - ft_strlen(str) - (fmt->signe ? 1 : 0) - fmt->prec;
 	len -= fmt->prefixe;
-	len = print_numbers(fmt, str, len);
+	len = print_numbers(fd, fmt, str, len);
 	fmt->signe == '-' ? free(--str) : ft_strdel(&str);
 	return (len);
 }

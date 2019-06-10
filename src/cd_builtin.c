@@ -6,20 +6,20 @@
 /*   By: aben-azz <aben-azz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/28 05:59:29 by aben-azz          #+#    #+#             */
-/*   Updated: 2019/05/31 04:27:25 by aben-azz         ###   ########.fr       */
+/*   Updated: 2019/06/10 11:22:56 by aben-azz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-static void		print_pth(char *path)
+void	print_pth(char *path)
 {
 	if (!path)
 		return ;
 	ft_putstr(path);
 }
 
-int				change_dir(char *path, int print_path)
+int		change_dir(char *path, int print_path)
 {
 	char	*cwd;
 	char	buff[4097];
@@ -45,14 +45,12 @@ int				change_dir(char *path, int print_path)
 			ft_putstr("cd: not a directory: ");
 		ft_putendl(path);
 	}
-	//ft_strdel(&path);
 	return (1);
 }
 
-static int		has_two_args(char **args)
+int		has_two_args(char **args)
 {
 	char	cwd[4096];
-	//char	buff[4096 + 1];
 	char	*tmp;
 
 	tmp = NULL;
@@ -77,7 +75,16 @@ static int		has_two_args(char **args)
 	return (0);
 }
 
-int				ft_cd(char **argv)
+int		set_oldpwd(char *home_path)
+{
+	ft_strdel(&home_path);
+	home_path = get_env("OLDPWD");
+	change_dir(home_path, 1);
+	ft_strdel(&home_path);
+	return (1);
+}
+
+int		ft_cd(char **argv)
 {
 	char	*home_path;
 
@@ -99,50 +106,9 @@ int				ft_cd(char **argv)
 			return (1);
 		}
 		else if (argv[1][0] == '-' && !argv[1][2])
-		{
-			ft_strdel(&home_path);
-			home_path = get_env("OLDPWD");
-			change_dir(home_path, 1);
-			ft_strdel(&home_path);
-			return (1);
-		}
+			return (set_oldpwd(home_path));
 		change_dir(argv[1], 0);
 	}
 	ft_strdel(&home_path);
 	return (1);
-}
-
-void			signal_handler_command(int sig)
-{
-	if (sig == SIGINT)
-	{
-		signal(SIGINT, signal_handler_command);
-		ft_printf("\n");
-	}
-}
-
-int		quick_cd(char **cmd)
-{
-	char	*s;
-	t_stat	f;
-	char	buff[4096];
-
-	getcwd(buff, 4096);
-	s = (cmd[0] + ft_lastindexof(cmd[0], '/') + 1);
-	if (!ft_strcmp(s, ".."))
-		return (change_dir(ft_strsub(buff, 0, ft_lastindexof(buff, '/')), 0));
-	else if (!ft_strcmp(s, "~"))
-		return (change_dir(NULL, 0));
-	else if (lstat(cmd[0], &f) != -1)
-	{
-		if (f.st_mode & S_IFDIR)
-			return (change_dir(cmd[0], 0));
-		else
-			return (-1);
-	}
-	else if (lstat(s, &f) != -1 && (f.st_mode & S_IFDIR))
-	{
-		return (change_dir(s, 0));
-	}
-	return (-1);
 }
