@@ -6,7 +6,7 @@
 /*   By: aben-azz <aben-azz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/10 11:23:39 by aben-azz          #+#    #+#             */
-/*   Updated: 2019/06/10 13:50:45 by aben-azz         ###   ########.fr       */
+/*   Updated: 2019/06/11 23:40:40 by aben-azz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,7 @@ void	get_expansion(char *str, char *act_env, int length, char **replaced)
 	char	*copy;
 
 	env = get_env(act_env + 1);
+	!env ? exit(0) : 0;
 	if ((env2 = get_env(act_env + 1 + length)))
 	{
 		ft_strdel(&env2);
@@ -38,7 +39,9 @@ void	get_expansion(char *str, char *act_env, int length, char **replaced)
 		copy = ft_strreplace(str, act_env, "0");
 	else
 		copy = ft_strreplace(str, act_env, "");
+	!copy ? exit(0) : 0;
 	*replaced = ft_strdup(copy);
+	!replaced ? exit(0) : 0;
 	ft_strdel(&copy);
 	ft_strdel(&env);
 }
@@ -77,10 +80,34 @@ char	*expansion_dollar(char *string)
 	set_variable(il, string, dollar_index);
 	if (is_expansion_printable(string, dollar_index, il[0]))
 	{
-		act_env = ft_substr(string, dollar_index, il[0]);
+		if (!(act_env = ft_substr(string, dollar_index, il[0])))
+			return (NULL);
 		ft_strdel(&replaced);
 		get_expansion(string, act_env, il[1], &replaced);
 		ft_strdel(&act_env);
 	}
 	return (replaced);
+}
+
+void	handle_input(char **input)
+{
+	char *exp;
+	char *home;
+	char *copy;
+
+	if (!(copy = ft_strdup(*input)))
+		exit(1);
+	if (!(home = get_env("HOME")))
+		exit(1);
+	if (~ft_indexof(*input, '~'))
+	{
+		if (!(exp = ft_strreplace(copy, "~", home)))
+			exit(1);
+		handler(&exp);
+		ft_strdel(&copy);
+	}
+	else
+		handler(&copy);
+	ft_strdel(&copy);
+	ft_strdel(&home);
 }

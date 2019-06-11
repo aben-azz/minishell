@@ -6,7 +6,7 @@
 /*   By: aben-azz <aben-azz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/28 05:59:29 by aben-azz          #+#    #+#             */
-/*   Updated: 2019/06/10 11:22:56 by aben-azz         ###   ########.fr       */
+/*   Updated: 2019/06/11 23:26:32 by aben-azz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,8 @@ int		change_dir(char *path, int print_path)
 	char	*cwd;
 	char	buff[4097];
 
-	cwd = getcwd(buff, 4096);
+	if (!(cwd = getcwd(buff, 4096)))
+		return (0);
 	if (!chdir(path))
 	{
 		if (print_path)
@@ -38,12 +39,11 @@ int		change_dir(char *path, int print_path)
 	else
 	{
 		if (access(path, F_OK) == -1)
-			ft_putstr("cd: no such file or directory: ");
+			ft_printf("cd: no such e file or directory: %s\n", path);
 		else if (access(path, R_OK) == -1)
-			ft_putstr("cd: permission denied: ");
+			ft_printf("cd: permission denied: %s\n", path);
 		else
-			ft_putstr("cd: not a directory: ");
-		ft_putendl(path);
+			ft_printf("cd: not a directory: %s\n", path);
 	}
 	return (1);
 }
@@ -61,7 +61,8 @@ int		has_two_args(char **args)
 			ft_putendl("cd: too many arguments\n");
 			return (1);
 		}
-		getcwd(cwd, 4096);
+		if (!(getcwd(cwd, 4096)))
+			return (0);
 		if (!(tmp = ft_strreplace(cwd, args[1], args[2])))
 		{
 			ft_putstr("cd: string not in pwd: ");
@@ -88,13 +89,13 @@ int		ft_cd(char **argv)
 {
 	char	*home_path;
 
-	home_path = get_env("HOME");
-	if (!argv[1])
+	if ((home_path = get_env("HOME")) && !argv[1])
 	{
 		change_dir(home_path, 0);
 		ft_strdel(&home_path);
 		return (1);
 	}
+	!home_path ? exit(0) : 0;
 	if (has_two_args(argv))
 		return (1);
 	else

@@ -6,7 +6,7 @@
 /*   By: aben-azz <aben-azz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/12/08 08:51:22 by aben-azz          #+#    #+#             */
-/*   Updated: 2019/06/10 13:51:23 by aben-azz         ###   ########.fr       */
+/*   Updated: 2019/06/11 23:46:05 by aben-azz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,8 @@ int		exec(char **argv, char **av, int m, char **path)
 			else
 			{
 				ft_strdel(&av[i]);
-				av[i] = ft_strcjoin(path[j++], argv[0], '/');
+				if (!(av[i] = ft_strcjoin(path[j++], argv[0], '/')))
+					return (0);
 			}
 		}
 		if (~execute(av, 1, 1))
@@ -48,15 +49,16 @@ int		exec_valid_command(char **argv, int m)
 	char	**path;
 	char	*leak;
 
-	leak = get_env("PATH");
-	path = ft_strsplit(leak, ':');
+	if (!(leak = get_env("PATH")))
+		exit(0);
+	if (!(path = ft_strsplit(leak, ':')))
+		exit(0);
 	ft_strdel(&leak);
-	av = malloc(sizeof(char*) * 2048);
+	if (!(av = malloc(sizeof(char*) * 2048)))
+		exit(0);
 	signal(SIGINT, signal_handler_command);
 	if (!(pid = fork()))
-	{
 		exec(argv, av, m, path);
-	}
 	else if (pid < 0)
 		return (ft_printf("Fork failed to create a new process.\n") ? -1 : -1);
 	wait(&pid);
@@ -84,8 +86,10 @@ int		handler(char **string)
 	int		ij[2];
 
 	ij[0] = 0;
-	test = expansion_dollar(*string);
-	cmd = ft_strsplit(test, ';');
+	if (!(test = expansion_dollar(*string)))
+		exit(0);
+	if (!(cmd = ft_strsplit(test, ';')))
+		exit(0);
 	while (cmd[ij[0]])
 	{
 		ij[1] = 0;
@@ -114,9 +118,9 @@ int		main(int ac, char **av, char **env)
 		signal(SIGINT, signal_handler_empty);
 		if ((ret = get_next_line(0, &input, '\n')) > 0)
 		{
-			handler(&input);
+			handle_input(&input);
+			ft_strdel(&input);
 		}
-		ft_strdel(&input);
 		if (ret == -1)
 			break ;
 	}

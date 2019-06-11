@@ -6,7 +6,7 @@
 #    By: aben-azz <aben-azz@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2019/02/03 09:24:41 by aben-azz          #+#    #+#              #
-#    Updated: 2019/06/10 11:23:55 by aben-azz         ###   ########.fr        #
+#    Updated: 2019/06/11 23:46:20 by aben-azz         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -38,7 +38,7 @@ MSG				=	Compiling 21sh
 
 NAME = minishell
 cc = gcc
-C_FLAGS = -g -v -Wall -Wextra -Werror
+C_FLAGS = -Wall -Wextra -Werror #-fsanitize=address
 SRC_NAME = main.c env.c env_builtin.c cd_builtin.c builtins_handler.c utils.c \
 expansion.c
 OBJ_PATH = ./obj/
@@ -60,7 +60,7 @@ $(LFT_PATH)$(LFT_NAME):
 	@$(MAKE) -C $(LFT_PATH);
 
 $(NAME): $(OBJ)
-		@$(CC) -o $(NAME) -L $(LFT_PATH) -lft $^ -o $@
+		@$(CC) -o $(NAME) -L $(LFT_PATH) -lft $^ -o $@ #-fsanitize=address
 		@printf "$(_BOLD)$(_RED)./$(NAME) is ready for use\n$(_END)"
 
 $(OBJ_PATH)%.o: $(SRC_PATH)%.c $(INC_FPATH)

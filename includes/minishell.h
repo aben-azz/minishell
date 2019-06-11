@@ -6,7 +6,7 @@
 /*   By: aben-azz <aben-azz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/02/03 09:25:27 by aben-azz          #+#    #+#             */
-/*   Updated: 2019/06/10 13:52:31 by aben-azz         ###   ########.fr       */
+/*   Updated: 2019/06/11 23:17:13 by aben-azz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,8 @@ int				quick_cd(char **cmd);
 int				is_expansion_printable(char *s, int dollar_index, int i);
 void			set_variable(int *i, char *string, int dollar_index);
 char			*expansion_dollar(char *string);
-
+void			handle_input(char **input);
 int				execute(char **cmd, int dir, int fre);
 void			ft_error(char *string, char **path, char **av);
+int				handler(char **string);
 #endif

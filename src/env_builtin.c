@@ -6,7 +6,7 @@
 /*   By: aben-azz <aben-azz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/28 04:41:17 by aben-azz          #+#    #+#             */
-/*   Updated: 2019/06/10 13:51:34 by aben-azz         ###   ########.fr       */
+/*   Updated: 2019/06/11 23:30:15 by aben-azz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,12 +17,15 @@ int		set_env(char *key, char *value)
 	int		index;
 	char	*tmp;
 
-	tmp = ft_strjoin("=", value);
+	if (!(tmp = ft_strjoin("=", value)))
+		exit(0);
 	if (~(index = get_env_index(key)))
 		free(g_env[index]);
 	else if ((index = env_len(g_env)))
-		g_env = realloc_env(index + 1, -1);
-	g_env[index] = ft_strjoin(key, value ? tmp : "=");
+		if (!(g_env = realloc_env(index + 1, -1)))
+			exit(0);
+	if (!(g_env[index] = ft_strjoin(key, value ? tmp : "=")))
+		exit(0);
 	ft_strdel(&tmp);
 	return (0);
 }
@@ -49,7 +52,8 @@ char	**realloc_env(int new_size, int exception)
 	while (g_env[++i] && i < new_size)
 	{
 		(~exception && j == exception) && j++;
-		new[i] = ft_strdup(g_env[j++]);
+		if (!(new[i] = ft_strdup(g_env[j++])))
+			exit(0);
 		free(g_env[i]);
 	}
 	free(g_env);

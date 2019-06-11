@@ -6,7 +6,7 @@
 /*   By: midrissi <midrissi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/10/04 13:56:36 by midrissi          #+#    #+#             */
-/*   Updated: 2019/06/10 10:21:58 by aben-azz         ###   ########.fr       */
+/*   Updated: 2019/06/11 23:02:11 by aben-azz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -124,7 +124,7 @@ void			ft_lstadd(t_list **alst, t_list *new);
 int				ft_lstpushback(t_list **begin, t_list *new);
 void			ft_lstrev(t_list **alst);
 int				ft_lstdestroy(t_list **lst);
-int	ft_repeat_char(int fd, char c, int n);
+int				ft_repeat_char(int fd, char c, int n);
 typedef struct	s_fmt
 {
 	int				prec;

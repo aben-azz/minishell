@@ -6,7 +6,7 @@
 /*   By: aben-azz <aben-azz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/25 06:57:16 by aben-azz          #+#    #+#             */
-/*   Updated: 2019/06/10 11:22:03 by aben-azz         ###   ########.fr       */
+/*   Updated: 2019/06/11 23:28:33 by aben-azz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,12 +28,14 @@ void	init_env(char **env)
 {
 	int		i;
 
-	if (!(g_env = (char **)ft_memalloc(sizeof(char *) * (env_len(env) + 1))))
+	i = ft_split_count(env);
+	if (!(g_env = (char **)ft_memalloc(sizeof(char *) * (i + 1))))
 		exit(0);
 	i = -1;
 	while (env[++i])
 		if (!(g_env[i] = ft_strdup(env[i])))
 			exit(0);
+	g_env[i] = NULL;
 }
 
 char	*get_env(char *name)
@@ -59,7 +61,8 @@ int		get_env_index(char *name)
 		return (-1);
 	while (g_env[++i])
 	{
-		str = ft_strsub(g_env[i], 0, ft_indexof(g_env[i], '='));
+		if (!(str = ft_strsub(g_env[i], 0, ft_indexof(g_env[i], '='))))
+			exit(0);
 		if (!ft_strcmp(str, name))
 		{
 			ft_strdel(&str);
